@@ -1,9 +1,12 @@
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
+
 use leptos_router::{
-    components::{Route, Router, Routes},
-    StaticSegment,
+    components::{Outlet, ParentRoute, Route, Router, Routes},
+    path,
 };
+
+use crate::components::sectors::Sectors;
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -40,7 +43,11 @@ pub fn App() -> impl IntoView {
         <Router>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=HomePage/>
+                    // <Route path=StaticSegment("") view=HomePage/>
+                    <ParentRoute path=path!("") view=HomePage>
+                        <Route path=path!(":sector") view=Sectors/>
+                        <Route path=path!("") view= move || view! {<h2>"Can not match any route."</h2>}/>
+                    </ParentRoute>
                 </Routes>
             </main>
         </Router>
@@ -57,5 +64,7 @@ fn HomePage() -> impl IntoView {
     view! {
         <h1>"Welcome to Leptos!"</h1>
         <button on:click=on_click>"Click Me: " {count}</button>
+
+        <Outlet/>
     }
 }
