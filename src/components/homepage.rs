@@ -11,7 +11,7 @@ pub fn HomePage() -> impl IntoView {
     let menu_once = OnceResource::new(get_menus());
 
     view! {
-        <div>
+        <div class="w-full h-40 bg-amber-300 flex gap-4">
             <Suspense fallback=|| view! { <div>"菜单加载中..."</div> }>
             {
                 move || {
