@@ -30,7 +30,7 @@ pub async fn get_menus() -> Result<Vec<MenuDto>, ServerFnError> {
 
         let menus = TabMenu::find()
             .filter(conditions)
-            .order_by_desc(tab_menu::Column::Id)
+            .order_by_asc(tab_menu::Column::Id)
             .all(db)
             .await
             .unwrap();

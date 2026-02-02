@@ -22,9 +22,11 @@ pub fn Sectors() -> impl IntoView {
             .unwrap_or_default()
     });
 
-    let is_project = Signal::derive(move || sector.get()() == "projects");
-    let is_about_me = Signal::derive(move || sector.get()() == "about_me");
-    let is_robotics = Signal::derive(move || sector.get()() == "robotics");
+    let is_project = Signal::derive(move || sector.get()() == "Projects");
+    let is_about_me = Signal::derive(move || sector.get()() == "About_Me");
+    let is_robotics = Signal::derive(move || sector.get()() == "Robotics");
+    let is_web = Signal::derive(move || sector.get()() == "Web");
+    let is_tool = Signal::derive(move || sector.get()() == "Tools");
     view! {
         <div>
             <If condition=is_project>
@@ -32,6 +34,8 @@ pub fn Sectors() -> impl IntoView {
                 <Then slot:then><ProjectsSector /></Then>
                 <ElseIf slot condition=is_about_me><AboutMeSector /></ElseIf>
                 <ElseIf slot condition=is_robotics><p>"这是 robotics 栏目"</p></ElseIf>
+                <ElseIf slot condition=is_web><p>"这是 Web 栏目"</p></ElseIf>
+                <ElseIf slot condition=is_tool><p>"这是 Tools 栏目"</p></ElseIf>
                 <Fallback slot><p>"进入了fallback分支！"</p></Fallback>
             </If>
         </div>
