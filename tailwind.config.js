@@ -4,7 +4,11 @@ module.exports = {
     "./src/**/*.{html,rs,ts,tsx}", // do not add empty space between file types
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        dongle: ["Dongle", "ui-sans-serif", "system-ui"],
+      },
+    },
   },
   plugins: [],
 };
