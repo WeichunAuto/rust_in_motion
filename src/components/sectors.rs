@@ -1,8 +1,11 @@
 use leptos_router::{components::A, hooks::use_params, params::Params};
 
 use leptos::prelude::*;
+// use leptos_shadcn_ui::{Button, Card, Input};
 
 use crate::components::common::{ElseIf, Fallback, If, Then};
+// use leptos_shadcn_button::Button;
+// use leptos_shadcn_input::Input;
 
 // 不同栏目切换的URL路径参数
 #[derive(Params, PartialEq)]
@@ -45,9 +48,8 @@ pub fn Sectors() -> impl IntoView {
 #[component]
 fn ProjectsSector() -> impl IntoView {
     view! {
-        <div>
-            <p>"这是项目栏目"</p>
-            <A href="/about_me">"进入 about_me"</A>
+        <div class="space-y-4 h-[1200px]">
+            "this is a project content."
         </div>
     }
 }
