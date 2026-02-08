@@ -35,7 +35,10 @@ pub fn HomePage() -> impl IntoView {
         <div class="relative min-h-screen">
 
             <div class="absolute h-36 inset-0 -z-10 bg-[url('/images/header_bg.png')] bg-cover bg-top"></div>
-            <div class="w-screen h-24"></div>
+            <div class="w-screen h-24">
+                <p class="text-5xl text-white pt-2.5 ml-20 flex align-bottom">"Rust in Motion"</p>
+                <p class="text-white text-2xl mt-[-15px] ml-20 tracking-wide">"Thoughts on robotics, with safety, systems, and performance in mind."</p>
+            </div>
                 // sticky 导航时改变样式
                 <header
                     class=move || {
@@ -47,8 +50,8 @@ pub fn HomePage() -> impl IntoView {
                         }
                     }
                 >
-                <div class="mx-auto max-w-6xl px-4 h-12 flex items-center justify-between">
-                    <div class="w-1/4">"My Site"</div>
+                <div class="mx-auto px-4 h-12 flex items-center justify-between">
+                    <div class="w-1/4"></div>
                     <div class="w-2/4 font-dongle font-light text-3xl flex gap-5 justify-left">
                         <nav class="flex gap-5">
                             <Suspense fallback=|| view! { <div>"菜单加载中..."</div> }>

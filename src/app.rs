@@ -7,6 +7,9 @@ use leptos_router::{
 };
 
 use crate::components::{homepage::HomePage, sectors::Sectors};
+use leptos::ev::resize;
+use web_sys::window;
+use web_sys::MediaQueryList;
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -30,6 +33,28 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
+
+    // 监听是否是移动屏幕
+    let (is_mobile, set_is_mobile) = signal(false);
+    Effect::new(move || {
+        let Some(win) = window() else { return };
+        // 创建 matchMedia
+        let mql: MediaQueryList = win.match_media("(max-width: 640px)").unwrap().unwrap();
+        // 先设置一次初始值
+        set_is_mobile.set(mql.matches());
+
+        // 只要 resize 就重新判断 matches()
+        window_event_listener(resize, move |_| {
+            set_is_mobile.set(mql.matches());
+        });
+    });
+
+    // 将是否移动屏幕，放入全局context中去。
+    provide_context(is_mobile);
+
+    // Effect::new(move |_| {
+    //     leptos::logging::log!("is_mobile = {}", is_mobile.get());
+    // });
 
     view! {
         // injects a stylesheet into the document <head>
