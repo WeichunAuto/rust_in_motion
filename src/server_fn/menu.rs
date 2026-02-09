@@ -44,6 +44,8 @@ pub async fn get_menus() -> Result<Vec<MenuDto>, ServerFnError> {
             })
             .collect();
 
+        // tracing::info!("data loaded: {:?}", menus_dto);
+
         Ok(menus_dto)
     }
 

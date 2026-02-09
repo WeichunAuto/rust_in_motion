@@ -4,7 +4,7 @@ use leptos_router::components::{Outlet, A};
 use crate::components::common::{Fallback, If, Then};
 use crate::components::mobile_header::MobileHeader;
 use crate::components::pc_header::PcHeader;
-use crate::{components::icons::search::SearchIcon, server_fn::menu::get_menus};
+use crate::{components::icons::icons::SearchIcon, server_fn::menu::get_menus};
 use wasm_bindgen::prelude::*;
 use web_sys::wasm_bindgen;
 use web_sys::window;
@@ -40,7 +40,7 @@ pub fn HomePage() -> impl IntoView {
     view! {
         <If condition=is_mobile.into()>
                 // The `If` component always expects a `Then` child for `then_slot`
-                <Then slot:then><MobileHeader menu_once=menu_once scrolled=scrolled /></Then>
+                <Then slot:then><MobileHeader menu_once=menu_once /></Then>
 
                 <Fallback slot>
                     <PcHeader menu_once=menu_once scrolled=scrolled />
