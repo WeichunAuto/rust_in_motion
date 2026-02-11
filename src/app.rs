@@ -2,11 +2,11 @@ use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 
 use leptos_router::{
-    components::{ParentRoute, Route, Router, Routes},
+    components::{Outlet, ParentRoute, Route, Router, Routes},
     path,
 };
 
-use crate::components::{homepage::HomePage, sectors::Sectors};
+use crate::components::{headers::Headers, sectors::Sectors};
 use leptos::ev::resize;
 use web_sys::window;
 use web_sys::MediaQueryList;
@@ -68,8 +68,21 @@ pub fn App() -> impl IntoView {
         <Router>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    // <Route path=StaticSegment("") view=HomePage/>
-                    <ParentRoute path=path!("") view=HomePage>
+                    // 文章编辑的路由，仅开放给管理员
+                    <ParentRoute path=path!("/rust_in_motion/article/admin/about_me") view=move || view! {
+                        <div>
+                            <h1 class="font-bold text-6xl w-screen text-center">"闲人勿进！"</h1>
+                            <Outlet/>
+                        </div>
+                    }>
+                        <Route path=path!("summary") view=move || view! {<h2>"正在访问summary."</h2>}/>
+                        <Route path=path!("quez") view=move || view! {<h2>"正在访问quez."</h2>}/>
+                        <Route path=path!("") view= move || view! {<h2>"Can not match any route."</h2>}/>
+
+                    </ParentRoute>
+
+                    // 用户访问路由
+                    <ParentRoute path=path!("/") view=Headers>
                         <Route path=path!(":sector") view=Sectors/>
                         <Route path=path!("") view= move || view! {<h2>"Can not match any route."</h2>}/>
                     </ParentRoute>

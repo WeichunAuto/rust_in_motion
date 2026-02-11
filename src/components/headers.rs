@@ -4,7 +4,7 @@ use leptos_router::components::{Outlet, A};
 use crate::components::common::{Fallback, If, Then};
 use crate::components::mobile_header::MobileHeader;
 use crate::components::pc_header::PcHeader;
-use crate::{components::icons::icons::SearchIcon, server_fn::menu::get_menus};
+use crate::server_fn::menu::get_menus;
 use wasm_bindgen::prelude::*;
 use web_sys::wasm_bindgen;
 use web_sys::window;
@@ -12,7 +12,7 @@ use web_sys::window;
  * 系统头部公共导航部分
  */
 #[component]
-pub fn HomePage() -> impl IntoView {
+pub fn Headers() -> impl IntoView {
     // 一次性加载菜单资源
     let menu_once = OnceResource::new(get_menus());
 
