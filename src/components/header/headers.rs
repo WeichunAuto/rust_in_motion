@@ -1,9 +1,9 @@
-use leptos::{either::Either, prelude::*};
-use leptos_router::components::{Outlet, A};
+use leptos::prelude::*;
 
 use crate::components::common::{Fallback, If, Then};
-use crate::components::mobile_header::MobileHeader;
-use crate::components::pc_header::PcHeader;
+
+use crate::components::header::mobile_header::MobileHeader;
+use crate::components::header::pc_header::PcHeader;
 use crate::server_fn::menu::get_menus;
 use wasm_bindgen::prelude::*;
 use web_sys::wasm_bindgen;

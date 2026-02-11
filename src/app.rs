@@ -6,7 +6,7 @@ use leptos_router::{
     path,
 };
 
-use crate::components::{headers::Headers, sectors::Sectors};
+use crate::components::{header::headers::Headers, header::sectors::Sectors};
 use leptos::ev::resize;
 use web_sys::window;
 use web_sys::MediaQueryList;
