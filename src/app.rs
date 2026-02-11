@@ -6,7 +6,7 @@ use leptos_router::{
     path,
 };
 
-use crate::components::{header::headers::Headers, header::sectors::Sectors};
+use crate::components::{about_me::update_quez::UpdateQuez, header::{headers::Headers, sectors::Sectors}};
 use leptos::ev::resize;
 use web_sys::window;
 use web_sys::MediaQueryList;
@@ -76,7 +76,7 @@ pub fn App() -> impl IntoView {
                         </div>
                     }>
                         <Route path=path!("summary") view=move || view! {<h2>"正在访问summary."</h2>}/>
-                        <Route path=path!("quez") view=move || view! {<h2>"正在访问quez."</h2>}/>
+                        <Route path=path!("quez") view=UpdateQuez/>
                         <Route path=path!("") view= move || view! {<h2>"Can not match any route."</h2>}/>
 
                     </ParentRoute>

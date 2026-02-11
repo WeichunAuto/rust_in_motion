@@ -12,18 +12,10 @@ pub struct Model {
     #[sea_orm(unique)]
     pub quez: String,
     pub create_at: Option<DateTimeWithTimeZone>,
+    pub answer: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {
-    #[sea_orm(has_many = "super::answer::Entity")]
-    Answer,
-}
-
-impl Related<super::answer::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Answer.def()
-    }
-}
+pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}

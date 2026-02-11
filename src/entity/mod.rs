@@ -3,7 +3,6 @@
 pub mod prelude;
 
 pub mod about_me;
-pub mod answer;
 pub mod blog;
 pub mod blog_category;
 pub mod project;
