@@ -1,4 +1,5 @@
 -- Add migration script here
+-- Add migration script here
 -- CREATE TYPE GENDER AS ENUM('Male', 'Female', 'Intersex');
 
 -- create tab_menu table 首页菜单
