@@ -46,6 +46,7 @@ pub fn UpdateQuez() -> impl IntoView {
                 })
             } else {
                 Either::Right(view! {
+                    <p>"将读取 Markdown 文件位置：article/about_me/answer_for_quez_"{quez_id.get()}".md"</p>
                     <button
                         class="px-4 py-2 rounded bg-black text-white"
                         on:click=move |_| {update_answer.dispatch(quez_id.get());}
@@ -68,7 +69,7 @@ pub fn UpdateQuez() -> impl IntoView {
                                 Some(Ok(false)) => view! { <p class="text-red-600">"更新失败，quez ID 不存在或发生错误！"</p> }.into_any(),
                                 Some(Err(e)) => view! { <p class="text-red-600">{format!("❌ 错误: {}", e)}</p> }.into_any(),
                                 None => view! { <p class="text-red-600">"未知错误咯。。。"</p> }.into_any(),
-                            }   
+                            }
                         }
                     }
                     </Show>
