@@ -52,10 +52,6 @@ pub fn App() -> impl IntoView {
     // 将是否移动屏幕，放入全局context中去。
     provide_context(is_mobile);
 
-    // Effect::new(move |_| {
-    //     leptos::logging::log!("is_mobile = {}", is_mobile.get());
-    // });
-
     view! {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet

@@ -3,7 +3,7 @@ use leptos_router::{components::A, hooks::use_params, params::Params};
 use leptos::prelude::*;
 // use leptos_shadcn_ui::{Button, Card, Input};
 
-use crate::components::common::{ElseIf, Fallback, If, Then};
+use crate::components::{about_me::about_me::AboutMeSector, common::{ElseIf, Fallback, If, Then}};
 // use leptos_shadcn_button::Button;
 // use leptos_shadcn_input::Input;
 
@@ -50,16 +50,6 @@ fn ProjectsSector() -> impl IntoView {
     view! {
         <div class="space-y-4 h-[1200px]">
             "this is a project content."
-        </div>
-    }
-}
-
-#[component]
-fn AboutMeSector() -> impl IntoView {
-    view! {
-        <div>
-            <p>"这是About_Me 栏目"</p>
-            <A href="/projects">"进入 Projects"</A>
         </div>
     }
 }
