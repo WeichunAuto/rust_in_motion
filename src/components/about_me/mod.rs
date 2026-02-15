@@ -1,2 +1,1 @@
-pub mod update_quez;
-pub mod update_summary;
+pub mod admin;
