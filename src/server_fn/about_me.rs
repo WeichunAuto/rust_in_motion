@@ -16,23 +16,21 @@ use crate::state::app_state::AppState;
 pub async fn update_answer_by_quezid(id: i32) -> Result<bool, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
-        use crate::entity::question;
+        use crate::{constant::QUEZ_ANSWER_DIR, entity::question, server_fn::common::read_from_markdown};
         use sea_orm::ActiveValue::Set;
 
         let state = expect_context::<AppState>();
         let db = state.db();
 
-        let path = format!("article/about_me/answer_for_quez_{}.md", id);
+        let path = format!("{}answer_for_quez_{}.md", QUEZ_ANSWER_DIR, id);
         let content = match read_from_markdown(&path.as_str()) {
             Ok(c) => c,
             Err(e) => {
                 return Err(ServerFnError::ServerError(format!(
                     "read md file error: {path}, err={e}"
                 )));
-            },
+            }
         };
-        
-        // println!("content = {content}");
 
         // 更新
         let rt = question::Entity::update(question::ActiveModel {
@@ -44,31 +42,61 @@ pub async fn update_answer_by_quezid(id: i32) -> Result<bool, ServerFnError> {
         .await;
 
         match rt {
-            Ok(user) => {
-                // tracing::info!(
-                //     "user updated successfully with id = : {:?}, name = : {:?}",
-                //     user.id,
-                //     user.fullname
-                // );
+            Ok(_) => {
                 return Ok(true);
             }
             Err(DbErr::RecordNotUpdated) => {
-                // tracing::error!("User id: {} not found", users_dto.id);
                 return Ok(false);
             }
-            Err(e) => {
-                // tracing::error!("error updating user: {:?}", e);
+            Err(_) => {
                 return Ok(false);
             }
         }
     }
 
     #[cfg(not(feature = "ssr"))]
-    unreachable!("get_users should only run on the server");
+    unreachable!("update_answer_by_quezid should only run on the server");
 }
 
-// cong markdown 读取内容
-fn read_from_markdown(path: &str) -> anyhow::Result<String> {
-    let content = std::fs::read_to_string(path)?;
-    Ok(content)
+// 更新 Summary
+#[server]
+pub async fn update_summary() -> Result<bool, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use crate::{constant::SUMMARY_DIR, entity::about_me, server_fn::common::read_from_markdown};
+        use sea_orm::ActiveValue::Set;
+
+        let state = expect_context::<AppState>();
+        let db = state.db();
+
+        let path = format!("{}",SUMMARY_DIR);
+        let content = match read_from_markdown(&path.as_str()) {
+            Ok(c) => c,
+            Err(e) => {
+                return Err(ServerFnError::ServerError(format!(
+                    "read md file error: {path}, err={e}"
+                )));
+            }
+        };
+
+        // 首先查出第一条记录
+        let first_record_opt = about_me::Entity::find().one(db).await?;
+
+        // 再更新第一条记录的 summary 字段
+        match first_record_opt {
+            Some(first) => {
+                let mut active: about_me::ActiveModel = first.into();
+                active.summary = Set(content);
+
+                active.update(db).await?;
+                return Ok(true);
+            }
+            None => {
+                return Err(ServerFnError::ServerError(format!("no record.")));
+            }
+        }
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("update_summary should only run on the server");
 }

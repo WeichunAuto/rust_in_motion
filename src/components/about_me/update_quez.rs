@@ -1,7 +1,7 @@
 use leptos::{either::Either, logging::log, prelude::*};
 use leptos_router::hooks::use_query_map;
 
-use crate::server_fn::about_me::update_answer_by_quezid;
+use crate::{constant::QUEZ_ANSWER_DIR, server_fn::about_me::update_answer_by_quezid};
 
 // 这个页面用于对 quez 答案的 更新；
 #[component]
@@ -46,7 +46,7 @@ pub fn UpdateQuez() -> impl IntoView {
                 })
             } else {
                 Either::Right(view! {
-                    <p>"将读取 Markdown 文件位置：article/about_me/answer_for_quez_"{quez_id.get()}".md"</p>
+                    <p>{format!("将读取 Markdown 文件位置：{}answer_for_quez_", QUEZ_ANSWER_DIR)}{quez_id.get()}".md"</p>
                     <button
                         class="px-4 py-2 rounded bg-black text-white"
                         on:click=move |_| {update_answer.dispatch(quez_id.get());}
