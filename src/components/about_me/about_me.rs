@@ -1,7 +1,11 @@
 use leptos::prelude::*;
 
+use crate::server_fn::about_me::load_about_me;
+
 #[component]
 pub fn AboutMeSector() -> impl IntoView {
+    let about_me_resource = OnceResource::new(load_about_me());
+
     view! {
         <div class="w-full px-4 sm:px-6 lg:w-9/12 lg:px-0 mx-auto flex flex-col justify-start">
 
