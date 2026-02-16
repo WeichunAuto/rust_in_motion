@@ -1,11 +1,8 @@
-use leptos_router::{components::A, hooks::use_params, params::Params};
+use leptos_router::{hooks::use_params, params::Params};
 
 use leptos::prelude::*;
-// use leptos_shadcn_ui::{Button, Card, Input};
-
 use crate::components::{about_me::about_me::AboutMeSector, common::{ElseIf, Fallback, If, Then}};
-// use leptos_shadcn_button::Button;
-// use leptos_shadcn_input::Input;
+
 
 // 不同栏目切换的URL路径参数
 #[derive(Params, PartialEq)]

@@ -120,6 +120,7 @@ pub async fn load_about_me() -> Result<AboutMeDto, ServerFnError> {
 
         // 查出第一条记录
         let first_record_opt = about_me::Entity::find().one(db).await?;
+        // println!("first_record_opt = {:?}", first_record_opt);
         // 打包 AboutMeDto
         match first_record_opt {
             Some(first) => {

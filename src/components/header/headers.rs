@@ -39,13 +39,13 @@ pub fn Headers() -> impl IntoView {
 
     view! {
         <If condition=is_mobile.into()>
-                // The `If` component always expects a `Then` child for `then_slot`
-                <Then slot:then><MobileHeader menu_once=menu_once /></Then>
+            // The `If` component always expects a `Then` child for `then_slot`
+            <Then slot:then><MobileHeader menu_once=menu_once /></Then>
 
-                <Fallback slot>
-                    <PcHeader menu_once=menu_once scrolled=scrolled />
-                </Fallback>
-            </If>
+            <Fallback slot>
+                <PcHeader menu_once=menu_once scrolled=scrolled />
+            </Fallback>
+        </If>
 
     }
 }

@@ -58,43 +58,43 @@ pub fn MobileHeader(menu_once: OnceResource<Result<Vec<MenuDto>, ServerFnError>>
                     }
                 }>
                     <nav class="flex flex-col gap-5 pt-4">
-                            <Suspense fallback=|| view! { <div>"菜单加载中..."</div> }>
-                                    {
-                                        move || {
-                                            menu_once.get().map(|result| {
-                                                match result {
-                                                    Ok(menus) => Either::Left(view! {
-                                                        <ForEnumerate
-                                                            each = move || menus.clone()
-                                                            key = |menu| menu.id
-                                                            children = move |_, menu| {
-                                                                let href_link = if menu.menu_name == "About Me" {
-                                                                    "/About_Me".to_string()
-                                                                } else {
-                                                                    format!("/{}", menu.menu_name)
-                                                                };
-                                                                view! {
-                                                                    <div class="content-center text-center">
-                                                                        <A href=href_link
-                                                                            on:click= move |_| {
-                                                                                leptos::logging::log!("on clicked.");
-                                                                                is_menu_open.set(!is_menu_open.get());
-                                                                            }
-                                                                        >{menu.menu_name}</A>
-                                                                    </div>
-                                                                }
+                        <Suspense fallback=|| view! { <div>"菜单加载中..."</div> }>
+                                {
+                                    move || {
+                                        menu_once.get().map(|result| {
+                                            match result {
+                                                Ok(menus) => Either::Left(view! {
+                                                    <ForEnumerate
+                                                        each = move || menus.clone()
+                                                        key = |menu| menu.id
+                                                        children = move |_, menu| {
+                                                            let href_link = if menu.menu_name == "About Me" {
+                                                                "/About_Me".to_string()
+                                                            } else {
+                                                                format!("/{}", menu.menu_name)
+                                                            };
+                                                            view! {
+                                                                <div class="content-center text-center">
+                                                                    <A href=href_link
+                                                                        on:click= move |_| {
+                                                                            leptos::logging::log!("on clicked.");
+                                                                            is_menu_open.set(!is_menu_open.get());
+                                                                        }
+                                                                    >{menu.menu_name}</A>
+                                                                </div>
                                                             }
-                                                        />
-                                                    }),
-                                                    Err(_) => Either::Right(view! {
-                                                        <div>"加载菜单错误！"</div>
-                                                })
-                                                }
+                                                        }
+                                                    />
+                                                }),
+                                                Err(_) => Either::Right(view! {
+                                                    <div>"加载菜单错误！"</div>
                                             })
-                                        }
+                                            }
+                                        })
                                     }
-                            </Suspense>
-                        </nav>
+                                }
+                        </Suspense>
+                    </nav>
                 </div>
             </header>
 
