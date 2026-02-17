@@ -137,12 +137,14 @@ pub async fn load_about_me() -> Result<AboutMeDto, ServerFnError> {
 }
 
 /**
- * 根据 ID 查询出 question
+ * 根据 IDs 查询出 question
  */
 #[server]
 pub async fn get_question_by_ids(ids: Vec<i32>) -> Result<Vec<QuestionDto>, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
+        use sea_orm::QueryOrder;
+
         use crate::entity::question;
 
         let state = expect_context::<AppState>();
@@ -151,6 +153,7 @@ pub async fn get_question_by_ids(ids: Vec<i32>) -> Result<Vec<QuestionDto>, Serv
         // 根据 ID 查询
         let quez_models = question::Entity::find()
             .filter(question::Column::Id.is_in(ids))
+            .order_by_asc(question::Column::Id)
             .all(db)
             .await?;
 

@@ -14,7 +14,7 @@ pub fn AboutMeSector() -> impl IntoView {
     let about_me_resource = OnceResource::new(load_about_me());
 
     view! {
-        <div class="w-full px-4 sm:px-6 lg:w-9/12 lg:px-0 mx-auto flex flex-col justify-start">
+        <div class="w-full px-4 sm:px-6 lg:w-8/12 lg:px-0 mx-auto flex flex-col justify-start">
             <Suspense fallback=move|| view! {<p>"loading..."</p>}>
             {
                 move || match about_me_resource.get(){
@@ -34,7 +34,7 @@ fn AboutMeView(data: AboutMeDto) -> impl IntoView {
 
     // 一次性加载 question 数据
     let quez_resource = OnceResource::new(get_question_by_ids(quez_ids));
-    
+
     view! {
         // 顶部区域：Mobile 居中 / PC 左右布局
         <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
@@ -95,9 +95,34 @@ fn AboutMeView(data: AboutMeDto) -> impl IntoView {
         [&_li]:my-1
         "
         >
-            {
-                let quez_ids = data.get_quez_id();
-            }
+            <div class="flex flex-col gap-6">
+                <Suspense fallback=move || view! {<p>"quez loading..."</p>}>
+                    {
+                        move || match quez_resource.get() {
+                            Some(Ok(quez_dtos)) => view! {
+                                {
+                                    quez_dtos.into_iter()
+                                    .map(|quez_dto| {
+                                        let content = quez_dto.get_answer().unwrap_or("No writing answer yet.".to_string());
+                                        let html = markdown_to_html(&content);
+                                        view! {
+                                            <div class="flex flex-col gap-2">
+                                                // 问题
+                                                <div class="text-xl font-bold">{quez_dto.get_quez()}</div>
+                                                // 回答
+                                                <div inner_html=html></div>
+                                            </div>
+                                        }
+                                    })
+                                    .collect_view()
+                                }
+                            }.into_any(),
+                            Some(Err(_)) => view! {<p class="text-red-500">"quez loading failed"</p>}.into_any(),
+                            None => view! {<p>"quez loading..."</p>}.into_any()
+                        }
+                    }
+                </Suspense>
+            </div>
 
         </div>
 
