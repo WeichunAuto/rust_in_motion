@@ -15,21 +15,48 @@ pub fn AboutMeSector() -> impl IntoView {
 
     view! {
         <div class="w-full px-4 sm:px-6 lg:w-8/12 lg:px-0 mx-auto flex flex-col justify-start">
+            // Profile, Summary, and Quez 视图
             <Suspense fallback=move|| view! {<p>"loading..."</p>}>
             {
                 move || match about_me_resource.get(){
-                    Some(Ok(data)) => view!{<AboutMeView data=data />}.into_any(),
+                    Some(Ok(data)) => view!{<SummaryAndQuezView data=data />}.into_any(),
                     Some(Err(_)) => view! {<p>"unknown"</p>}.into_any(),
                     None => view! {<p>"I'm loading..."</p>}.into_any()
                 }
             }
             </Suspense>
+
+            // Like 视图
+            <LikeView />
         </div>
     }
 }
 
+/**
+ * Like 视图
+ */
 #[component]
-fn AboutMeView(data: AboutMeDto) -> impl IntoView {
+fn LikeView() -> impl IntoView {
+    view! {
+        <div class="flex flex-col gap-2 p-4 sm:p-6">
+            <div class="text-2xl font-bold flex flex-row gap-1">
+                <div class="content-center">"Likes"</div>
+                <div class="">
+                    <img class="size-10" src="/images/like.png"/>
+                </div>
+            </div>
+            <div>
+                <Tag tag_type=String::from("like")>"Reading"</Tag>
+            </div>
+        </div>
+    }
+}
+
+/**
+ * Profile, Summary, and Quez 视图
+ */
+#[component]
+fn SummaryAndQuezView(data: AboutMeDto) -> impl IntoView {
     let quez_ids = data.get_quez_id();
 
     // 一次性加载 question 数据
@@ -108,7 +135,7 @@ fn AboutMeView(data: AboutMeDto) -> impl IntoView {
                                         view! {
                                             <div class="flex flex-col gap-2">
                                                 // 问题
-                                                <div class="text-xl font-bold">{quez_dto.get_quez()}</div>
+                                                <div class="text-2xl font-bold">{quez_dto.get_quez()}</div>
                                                 // 回答
                                                 <div inner_html=html></div>
                                             </div>
@@ -123,8 +150,27 @@ fn AboutMeView(data: AboutMeDto) -> impl IntoView {
                     }
                 </Suspense>
             </div>
-
         </div>
 
+    }
+}
+
+#[component]
+fn Tag(tag_type: String, children: ChildrenFn) -> impl IntoView {
+    let is_like = tag_type == "like";
+    move || {
+        if is_like {
+            view! {
+                <div class="bg-emerald-300 text-sm font-light w-fit py-1.5 px-3 rounded-xl">
+                    {children()}
+                </div>
+            }
+        } else {
+            view! {
+                <div class="bg-rose-100 text-sm font-light text-rose-900">
+                    {children()}
+                </div>
+            }
+        }
     }
 }
