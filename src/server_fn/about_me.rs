@@ -6,7 +6,7 @@ use leptos::{
 #[cfg(feature = "ssr")]
 use sea_orm::prelude::*;
 
-use crate::dto::about_me_dto::AboutMeDto;
+use crate::dto::{about_me_dto::AboutMeDto, question_dto::QuestionDto};
 #[cfg(feature = "ssr")]
 use crate::state::app_state::AppState;
 
@@ -130,6 +130,36 @@ pub async fn load_about_me() -> Result<AboutMeDto, ServerFnError> {
                 return Err(ServerFnError::ServerError(format!("no record.")));
             }
         }
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("update_summary should only run on the server");
+}
+
+/**
+ * 根据 ID 查询出 question
+ */
+#[server]
+pub async fn get_question_by_ids(ids: Vec<i32>) -> Result<Vec<QuestionDto>, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use crate::entity::question;
+
+        let state = expect_context::<AppState>();
+        let db = state.db();
+
+        // 根据 ID 查询
+        let quez_models = question::Entity::find()
+            .filter(question::Column::Id.is_in(ids))
+            .all(db)
+            .await?;
+
+        let quez_dtos = quez_models
+            .into_iter()
+            .map(|quez| QuestionDto::new(quez.id, quez.quez, quez.answer))
+            .collect::<Vec<QuestionDto>>();
+
+        Ok(quez_dtos)
     }
 
     #[cfg(not(feature = "ssr"))]

@@ -2,11 +2,15 @@ use leptos::prelude::*;
 
 use crate::{
     dto::about_me_dto::AboutMeDto,
-    server_fn::{about_me::load_about_me, common::markdown_to_html},
+    server_fn::{
+        about_me::{get_question_by_ids, load_about_me},
+        common::markdown_to_html,
+    },
 };
 
 #[component]
 pub fn AboutMeSector() -> impl IntoView {
+    // 一次性加载 about me 数据
     let about_me_resource = OnceResource::new(load_about_me());
 
     view! {
@@ -26,6 +30,11 @@ pub fn AboutMeSector() -> impl IntoView {
 
 #[component]
 fn AboutMeView(data: AboutMeDto) -> impl IntoView {
+    let quez_ids = data.get_quez_id();
+
+    // 一次性加载 question 数据
+    let quez_resource = OnceResource::new(get_question_by_ids(quez_ids));
+    
     view! {
         // 顶部区域：Mobile 居中 / PC 左右布局
         <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
@@ -59,7 +68,7 @@ fn AboutMeView(data: AboutMeDto) -> impl IntoView {
             </div>
         </div>
 
-        // 内容区域
+        // Summary 内容区域
         <div class=
         "
         w-full mt-2 rounded-xl p-4 sm:p-6
@@ -76,5 +85,21 @@ fn AboutMeView(data: AboutMeDto) -> impl IntoView {
                 }
             }
         </div>
+
+        // Quez 区域
+        <div class=
+        "
+        w-full mt-2 rounded-xl p-4 sm:p-6
+        [&_ol]:list-decimal! [&_ol]:pl-6!
+        [&_ul]:list-disc! [&_ul]:pl-6!
+        [&_li]:my-1
+        "
+        >
+            {
+                let quez_ids = data.get_quez_id();
+            }
+
+        </div>
+
     }
 }
