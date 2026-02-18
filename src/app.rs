@@ -6,7 +6,12 @@ use leptos_router::{
     path,
 };
 
-use crate::components::{about_me::admin::{update_about_page::UpdateAboutPage, update_quez::UpdateQuez, update_summary::UpdateSummary}, header::{headers::Headers, sectors::Sectors}};
+use crate::components::{
+    about_me::admin::{
+        update_about_page::UpdateAboutPage, update_quez::UpdateQuez, update_summary::UpdateSummary,
+    },
+    header::{headers::Headers, sectors::Sectors},
+};
 use leptos::ev::resize;
 use web_sys::window;
 use web_sys::MediaQueryList;
@@ -85,5 +90,8 @@ pub fn App() -> impl IntoView {
                 </Routes>
             </main>
         </Router>
+
+        // footer down part
+        <div class="text-xs sm:text-sm font-light mt-20 mb-6 text-center text-gray-400 w-full">"© 2025 Bobby Wang. All rights reserved."</div>
     }
 }
