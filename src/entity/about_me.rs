@@ -14,6 +14,7 @@ pub struct Model {
     pub summary: String,
     pub quez_id: Vec<i32>,
     pub create_at: Option<DateTimeWithTimeZone>,
+    pub about_page: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

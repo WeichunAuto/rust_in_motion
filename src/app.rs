@@ -6,7 +6,7 @@ use leptos_router::{
     path,
 };
 
-use crate::components::{about_me::admin::{update_quez::UpdateQuez, update_summary::UpdateSummary}, header::{headers::Headers, sectors::Sectors}};
+use crate::components::{about_me::admin::{update_about_page::UpdateAboutPage, update_quez::UpdateQuez, update_summary::UpdateSummary}, header::{headers::Headers, sectors::Sectors}};
 use leptos::ev::resize;
 use web_sys::window;
 use web_sys::MediaQueryList;
@@ -73,7 +73,7 @@ pub fn App() -> impl IntoView {
                     }>
                         <Route path=path!("summary") view=UpdateSummary/>
                         <Route path=path!("quez") view=UpdateQuez/>
-                        <Route path=path!("") view=UpdateSummary/>
+                        <Route path=path!("about_this_page") view=UpdateAboutPage/>
 
                     </ParentRoute>
 

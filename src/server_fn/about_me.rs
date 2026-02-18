@@ -106,6 +106,50 @@ pub async fn update_summary() -> Result<bool, ServerFnError> {
     unreachable!("update_summary should only run on the server");
 }
 
+#[server]
+pub async fn update_about_page() -> Result<bool, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use crate::{
+            constant::ABOUT_PAGE_DIR, entity::about_me, server_fn::common::read_from_markdown,
+        };
+        use sea_orm::ActiveValue::Set;
+
+        let state = expect_context::<AppState>();
+        let db = state.db();
+
+        let path = format!("{}", ABOUT_PAGE_DIR);
+        let content = match read_from_markdown(&path.as_str()) {
+            Ok(c) => c,
+            Err(e) => {
+                return Err(ServerFnError::ServerError(format!(
+                    "read md file error: {path}, err={e}"
+                )));
+            }
+        };
+
+        // 首先查出第一条记录
+        let first_record_opt = about_me::Entity::find().one(db).await?;
+
+        // 再更新第一条记录的 summary 字段
+        match first_record_opt {
+            Some(first) => {
+                let mut active: about_me::ActiveModel = first.into();
+                active.about_page = Set(Some(content));
+
+                active.update(db).await?;
+                return Ok(true);
+            }
+            None => {
+                return Err(ServerFnError::ServerError(format!("no record.")));
+            }
+        }
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("update_about_page should only run on the server");
+}
+
 /**
  * 查询出 about me 的 name, summary, 和 问题id
  */
@@ -124,7 +168,12 @@ pub async fn load_about_me() -> Result<AboutMeDto, ServerFnError> {
         // 打包 AboutMeDto
         match first_record_opt {
             Some(first) => {
-                return Ok(AboutMeDto::new(first.name, first.summary, first.quez_id));
+                return Ok(AboutMeDto::new(
+                    first.name,
+                    first.summary,
+                    first.quez_id,
+                    first.about_page,
+                ));
             }
             None => {
                 return Err(ServerFnError::ServerError(format!("no record.")));

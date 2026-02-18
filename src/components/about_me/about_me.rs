@@ -20,18 +20,30 @@ pub fn AboutMeSector() -> impl IntoView {
             <Suspense fallback=move|| view! {<p>"loading..."</p>}>
             {
                 move || match about_me_resource.get(){
-                    Some(Ok(data)) => view!{<SummaryAndQuezView data=data />}.into_any(),
+                    Some(Ok(data)) => view!{
+                        <SummaryAndQuezView
+                            name=data.get_name()
+                            quez_ids=data.get_quez_id()
+                            summary=data.get_summary()
+                        />
+
+                        // Like 视图
+                        <LikeView />
+
+                        // Dislike 视图
+                        <DislikeView />
+
+                        // About the Page 视图
+                        <AboutThePage about_page=data.get_about_page()/>
+
+                    }.into_any(),
                     Some(Err(_)) => view! {<p>"unknown"</p>}.into_any(),
                     None => view! {<p>"I'm loading..."</p>}.into_any()
                 }
             }
             </Suspense>
 
-            // Like 视图
-            <LikeView />
 
-            // Dislike 视图
-            <DislikeView />
         </div>
     }
 }
@@ -42,7 +54,7 @@ pub fn AboutMeSector() -> impl IntoView {
 #[component]
 fn LikeView() -> impl IntoView {
     view! {
-        <div class="flex flex-col gap-2 p-4 sm:p-6">
+        <div class="flex flex-col gap-2 mt-2 p-4 sm:p-6">
             <div class="text-2xl font-bold flex flex-row gap-1">
                 <div class="content-center">"Likes"</div>
                 <div class="">
@@ -75,7 +87,7 @@ fn LikeView() -> impl IntoView {
 #[component]
 fn DislikeView() -> impl IntoView {
     view! {
-        <div class="flex flex-col gap-2 p-4 sm:p-6">
+        <div class="flex flex-col gap-2 mt-2 p-4 sm:p-6">
             <div class="text-2xl font-bold flex flex-row gap-1">
                 <div class="content-center">"Dislikes"</div>
                 <div class="">
@@ -89,15 +101,9 @@ fn DislikeView() -> impl IntoView {
                 <Tag tag_type=TagType::Dislike>"Procrastination"</Tag>
                 <Tag tag_type=TagType::Dislike>"Scrolling on Social Media"</Tag>
                 <Tag tag_type=TagType::Dislike>"Products with Poor User Experience"</Tag>
-                <Tag>"Robotics"</Tag>
-                <Tag>"ROS2"</Tag>
-                <Tag>"Path Planning"</Tag>
-                <Tag>"Building My Physique"</Tag>
-                <Tag>"Running"</Tag>
-                <Tag>"Hiking"</Tag>
-                <Tag>"Building Software to Solve Reall Problems"</Tag>
-                <Tag>"Product Thinking"</Tag>
-                <Tag>"Inspiring, Visually Striking Donghua with Strong Storytelling"</Tag>
+                <Tag tag_type=TagType::Dislike>"No Documentation"</Tag>
+                <Tag tag_type=TagType::Dislike>"Complaining Instead of Taking Action"</Tag>
+
             </div>
         </div>
     }
@@ -107,8 +113,8 @@ fn DislikeView() -> impl IntoView {
  * Profile, Summary, and Quez 视图
  */
 #[component]
-fn SummaryAndQuezView(data: AboutMeDto) -> impl IntoView {
-    let quez_ids = data.get_quez_id();
+fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl IntoView {
+    // let quez_ids = data.get_quez_id();
 
     // 一次性加载 question 数据
     let quez_resource = OnceResource::new(get_question_by_ids(quez_ids));
@@ -126,7 +132,7 @@ fn SummaryAndQuezView(data: AboutMeDto) -> impl IntoView {
 
                 <div class="flex flex-col justify-center">
                     <div class="text-2xl font-medium">
-                        {data.get_name()}
+                        {name}
                     </div>
                     <div class="text-sm text-gray-500">"20 Jan 2026"</div>
                 </div>
@@ -156,8 +162,8 @@ fn SummaryAndQuezView(data: AboutMeDto) -> impl IntoView {
         "
         >
             {
-                let content = data.get_summary();
-                let html = markdown_to_html(&content);
+                // let content = data.get_summary();
+                let html = markdown_to_html(&summary);
                 view! {
                     <div inner_html=html></div>
                 }
@@ -203,5 +209,30 @@ fn SummaryAndQuezView(data: AboutMeDto) -> impl IntoView {
             </div>
         </div>
 
+    }
+}
+
+/**
+ * About the Page 视图
+ */
+#[component]
+fn AboutThePage(about_page: Option<String>) -> impl IntoView {
+    let content = about_page.unwrap_or("No writing about this page yet.".to_string());
+    let html = markdown_to_html(&content);
+
+    view! {
+        <div class=
+        "
+        w-full mt-2 rounded-xl p-4 sm:p-6
+        [&_ol]:list-decimal! [&_ol]:pl-6!
+        [&_ul]:list-disc! [&_ul]:pl-6!
+        [&_li]:my-1
+        "
+        >
+            <div class="flex flex-col gap-2">
+                <div class="content-center text-2xl font-bold ">"About This Blog"</div>
+                <div inner_html=html></div>
+            </div>
+        </div>
     }
 }
