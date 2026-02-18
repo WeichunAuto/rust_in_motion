@@ -1,5 +1,7 @@
 use leptos::prelude::*;
 
+use crate::server_fn::common::TagType;
+
 /**
  * 定义 IF Then ElseIf 组件
  */
@@ -38,4 +40,31 @@ pub struct ElseIf {
 #[slot]
 pub struct Fallback {
     children: ChildrenFn,
+}
+
+/**
+ * 标签通用组件
+ */
+#[component]
+pub fn Tag(
+    #[prop(default=TagType::Like)] tag_type: TagType,
+    children: ChildrenFn,
+) -> impl IntoView {
+    match tag_type {
+        TagType::Like => view! {
+            <div class="bg-emerald-300 text-sm font-light w-fit py-1.5 px-3 rounded-xl">
+                {children()}
+            </div>
+        },
+        TagType::Dislike => view! {
+            <div class="bg-rose-100 text-sm font-light text-rose-900 w-fit py-1.5 px-3 rounded-xl">
+                {children()}
+            </div>
+        },
+        TagType::Tag => view! {
+            <div class="bg-rose-100 text-sm font-light text-rose-900">
+                {children()}
+            </div>
+        },
+    }
 }

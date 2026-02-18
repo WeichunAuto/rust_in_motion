@@ -1,10 +1,11 @@
 use leptos::prelude::*;
 
 use crate::{
+    components::common::Tag,
     dto::about_me_dto::AboutMeDto,
     server_fn::{
         about_me::{get_question_by_ids, load_about_me},
-        common::markdown_to_html,
+        common::{markdown_to_html, TagType},
     },
 };
 
@@ -28,6 +29,9 @@ pub fn AboutMeSector() -> impl IntoView {
 
             // Like 视图
             <LikeView />
+
+            // Dislike 视图
+            <DislikeView />
         </div>
     }
 }
@@ -45,8 +49,55 @@ fn LikeView() -> impl IntoView {
                     <img class="size-10" src="/images/like.png"/>
                 </div>
             </div>
-            <div>
-                <Tag tag_type=String::from("like")>"Reading"</Tag>
+            <div class="flex flex-row flex-wrap gap-2">
+                <Tag>"Spending Time in the Kitchen"</Tag>
+                <Tag>"Black Coffee"</Tag>
+                <Tag>"Reading"</Tag>
+                <Tag>"Meditation"</Tag>
+                <Tag>"Jazz Music"</Tag>
+                <Tag>"Robotics"</Tag>
+                <Tag>"ROS2"</Tag>
+                <Tag>"Path Planning"</Tag>
+                <Tag>"Building My Physique"</Tag>
+                <Tag>"Running"</Tag>
+                <Tag>"Hiking"</Tag>
+                <Tag>"Building Software to Solve Reall Problems"</Tag>
+                <Tag>"Product Thinking"</Tag>
+                <Tag>"Inspiring, Visually Striking Donghua with Strong Storytelling"</Tag>
+            </div>
+        </div>
+    }
+}
+
+/**
+ * DisLike 视图
+ */
+#[component]
+fn DislikeView() -> impl IntoView {
+    view! {
+        <div class="flex flex-col gap-2 p-4 sm:p-6">
+            <div class="text-2xl font-bold flex flex-row gap-1">
+                <div class="content-center">"Dislikes"</div>
+                <div class="">
+                    <img class="size-10" src="/images/dislike.png"/>
+                </div>
+            </div>
+            <div class="flex flex-row flex-wrap gap-2">
+                <Tag tag_type=TagType::Dislike>"Overly Processed Food"</Tag>
+                <Tag tag_type=TagType::Dislike>"Fizzy Beverages"</Tag>
+                <Tag tag_type=TagType::Dislike>"Getting Drunk"</Tag>
+                <Tag tag_type=TagType::Dislike>"Procrastination"</Tag>
+                <Tag tag_type=TagType::Dislike>"Scrolling on Social Media"</Tag>
+                <Tag tag_type=TagType::Dislike>"Products with Poor User Experience"</Tag>
+                <Tag>"Robotics"</Tag>
+                <Tag>"ROS2"</Tag>
+                <Tag>"Path Planning"</Tag>
+                <Tag>"Building My Physique"</Tag>
+                <Tag>"Running"</Tag>
+                <Tag>"Hiking"</Tag>
+                <Tag>"Building Software to Solve Reall Problems"</Tag>
+                <Tag>"Product Thinking"</Tag>
+                <Tag>"Inspiring, Visually Striking Donghua with Strong Storytelling"</Tag>
             </div>
         </div>
     }
@@ -152,25 +203,5 @@ fn SummaryAndQuezView(data: AboutMeDto) -> impl IntoView {
             </div>
         </div>
 
-    }
-}
-
-#[component]
-fn Tag(tag_type: String, children: ChildrenFn) -> impl IntoView {
-    let is_like = tag_type == "like";
-    move || {
-        if is_like {
-            view! {
-                <div class="bg-emerald-300 text-sm font-light w-fit py-1.5 px-3 rounded-xl">
-                    {children()}
-                </div>
-            }
-        } else {
-            view! {
-                <div class="bg-rose-100 text-sm font-light text-rose-900">
-                    {children()}
-                </div>
-            }
-        }
     }
 }
