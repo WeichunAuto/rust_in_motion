@@ -6,7 +6,10 @@ use leptos::{either::Either, prelude::*};
 use leptos_router::components::{Outlet, A};
 
 #[component]
-pub fn MobileHeader(menu_once: OnceResource<Result<Vec<MenuDto>, ServerFnError>>) -> impl IntoView {
+pub fn MobileHeader(
+    menu_once: OnceResource<Result<Vec<MenuDto>, ServerFnError>>,
+    scrolled: RwSignal<bool>,
+) -> impl IntoView {
     // 控制移动屏幕上的菜单开关
     let is_menu_open = RwSignal::new(false);
 
@@ -15,9 +18,20 @@ pub fn MobileHeader(menu_once: OnceResource<Result<Vec<MenuDto>, ServerFnError>>
                 // sticky 导航时改变样式
             <header class="sticky top-0 z-50 bg-white text-black shadow-md">
                 <div class="mx-auto px-4 h-12 flex items-center justify-between">
-                    <div class="w-1/4"></div>
-                    <div class="w-2/4 font-light text-3xl flex gap-5 justify-left">
+                    // <div class="w-2/4 text-base font-medium">
+                    <div class=move || {
+                        let base = "w-2/4";
+                        if scrolled.get() {
+                            format!("{base} font-medium transition-all duration-800 ease-out")
+                        } else {
+                            format!("{base} ml-[-160px]")
+                        }
+                    }>
 
+                    "Rust in Motion"
+
+                    </div>
+                    <div class="w-1/4 font-light text-3xl flex gap-5 justify-left bg-red-400">
                     </div>
 
                     // search icon
