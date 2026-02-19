@@ -41,7 +41,7 @@ pub fn PcHeader(
                         >"Rust in Motion"</p>
                     </div>
                     <div class="w-2/4 font-light text-lg flex gap-5 justify-left">
-                        <nav class="flex gap-5">
+                        <nav class="flex gap-8">
                             <Suspense fallback=|| view! { <div>"菜单加载中..."</div> }>
                                     {
                                         move || {
