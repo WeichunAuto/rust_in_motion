@@ -155,7 +155,7 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
         // Summary 内容区域
         <div class=
         "
-        w-full mt-2 rounded-xl p-4 sm:p-6
+        w-full rounded-xl p-4 sm:p-6
         [&_ol]:list-decimal! [&_ol]:pl-6!
         [&_ul]:list-disc! [&_ul]:pl-6!
         [&_li]:my-1
