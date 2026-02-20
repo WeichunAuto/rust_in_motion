@@ -2,7 +2,6 @@ use leptos::prelude::*;
 
 use crate::{
     components::common::Tag,
-    dto::about_me_dto::AboutMeDto,
     server_fn::{
         about_me::{get_question_by_ids, load_about_me},
         common::{markdown_to_html, TagType},
@@ -134,7 +133,7 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
                     <div class="text-2xl font-medium">
                         {name}
                     </div>
-                    <div class="text-sm text-gray-500">"20 Jan 2026"</div>
+                    <div class="text-sm text-gray-500">"15 Dec 2025"</div>
                 </div>
             </div>
 
