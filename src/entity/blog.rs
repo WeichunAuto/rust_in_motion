@@ -18,6 +18,7 @@ pub struct Model {
     pub cover_image_url: Option<String>,
     pub category_id: i32,
     pub create_at: Option<DateTimeWithTimeZone>,
+    pub is_featured: Option<bool>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
