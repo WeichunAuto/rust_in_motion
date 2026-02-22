@@ -10,6 +10,7 @@ use crate::components::{
     about_me::admin::{
         update_about_page::UpdateAboutPage, update_quez::UpdateQuez, update_summary::UpdateSummary,
     },
+    blog::admin::{add_blog::AddBlog, add_or_edit_blog::AddOrEditBlog, edit_blog::EditBlog},
     header::{headers::Headers, sectors::Sectors},
 };
 use leptos::ev::resize;
@@ -69,8 +70,8 @@ pub fn App() -> impl IntoView {
         <Router>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    // 文章编辑的路由，仅开放给管理员
-                    <ParentRoute path=path!("/rust_in_motion/article/admin/about_me") view=move || view! {
+                    // about_me 的编辑的路由，仅开放给管理员
+                    <ParentRoute path=path!("/rust_in_motion/article/about_me/admin") view=move || view! {
                         <div>
                             <h1 class="font-bold text-6xl w-screen text-center">"闲人勿进！"</h1>
                             <Outlet/>
@@ -79,8 +80,20 @@ pub fn App() -> impl IntoView {
                         <Route path=path!("summary") view=UpdateSummary/>
                         <Route path=path!("quez") view=UpdateQuez/>
                         <Route path=path!("about_this_page") view=UpdateAboutPage/>
-
                     </ParentRoute>
+
+                    // blog 的新增和编辑路由，仅开放给管理员
+                    <ParentRoute path=path!("/rust_in_motion/article/blog/admin") view=move || view! {
+                        <div>
+                            // <h1 class="font-bold text-6xl w-screen text-center">"闲人勿进！"</h1>
+                            <Outlet/>
+                        </div>
+                    }>
+                        <Route path=path!("add_blog") view=AddBlog/>
+                        <Route path=path!("edit_blog") view=EditBlog/>
+                        <Route path=path!("blog_lists") view=UpdateQuez/>
+                    </ParentRoute>
+
 
                     // 用户访问路由
                     <ParentRoute path=path!("/") view=Headers>
