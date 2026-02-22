@@ -2,15 +2,18 @@ use leptos::prelude::*;
 
 use crate::{
     dto::blog_dto::BlogDto,
-    server_fn::{blog::InsertBlog, common::markdown_to_html},
+    server_fn::{
+        blog::{load_blog_categories, InsertBlog},
+        common::markdown_to_html,
+    },
 };
 
 #[component]
 pub fn AddBlog() -> impl IntoView {
     let submit = ServerAction::<InsertBlog>::new();
-    let (content, set_content) = create_signal(String::new());
+    let (content, set_content) = signal(String::new());
 
-    let rendered_html = move || markdown_to_html(&content.get());
+    let blog_category_resourse = OnceResource::new(load_blog_categories());
 
     view! {
         <ActionForm action=submit>
@@ -70,10 +73,30 @@ pub fn AddBlog() -> impl IntoView {
                                        focus:outline-none
                                        focus:ring-1 focus:ring-black"
                             >
-                                <option value="1">"技术"</option>
-                                <option value="2">"Rust"</option>
-                                <option value="3">"机器人"</option>
-                                <option value="4">"随笔"</option>
+                                <Suspense fallback=move || view! {<option value="-1">"load...."</option>}>
+                                {
+                                    move || match blog_category_resourse.get() {
+                                        Some(Ok(category_dtos)) => view! {
+                                            {
+                                                category_dtos.into_iter()
+                                                .map(|category_dto| {
+                                                    view! {
+                                                        <option value={category_dto.get_id()}>{category_dto.get_category_name()}</option>
+                                                    }
+                                                })
+                                                .collect_view()
+                                            }
+                                        }.into_any(),
+                                        Some(Err(_)) => view! {
+                                            <option value="-1">"DB加载错误"</option>
+                                        }.into_any(),
+                                        None => view! {
+                                            <option value="-1">"加载错误"</option>
+                                        }.into_any()
+                                    }
+                                }
+                                </ Suspense>
+
                             </select>
                         </div>
 

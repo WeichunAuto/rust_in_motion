@@ -8,6 +8,7 @@ pub struct BlogDto {
     id: i32,
     blog_title: String,
     introduction: String,
+    content: Option<String>,
     tags: Vec<String>,
     cover_image_url: Option<String>,
     category_id: i32,
@@ -18,6 +19,7 @@ impl BlogDto {
         id: i32,
         blog_title: String,
         introduction: String,
+        content: Option<String>,
         tags: Vec<String>,
         cover_image_url: Option<String>,
         category_id: i32,
@@ -26,6 +28,7 @@ impl BlogDto {
             id,
             blog_title,
             introduction,
+            content,
             tags,
             cover_image_url,
             category_id,
@@ -42,6 +45,10 @@ impl BlogDto {
 
     pub fn get_introduction(&self) -> String {
         self.introduction.clone()
+    }
+
+    pub fn get_content(&self) -> Option<String> {
+        self.content.clone()
     }
 
     pub fn get_tags(&self) -> Vec<String> {
