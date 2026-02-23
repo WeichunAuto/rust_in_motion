@@ -1,9 +1,14 @@
-use leptos::{
-    prelude::{expect_context, ServerFnError},
-    server,
+use std::{
+    fs,
+    time::{SystemTime, UNIX_EPOCH},
 };
 
-use crate::dto::{blog_category_dto::BlogCategoryDto, blog_dto::BlogDto};
+use leptos::prelude::*;
+
+use crate::{
+    constant::BLOG_COVER_DIR,
+    dto::{blog_category_dto::BlogCategoryDto, blog_dto::BlogDto},
+};
 
 /**
  * 发布博客
@@ -16,6 +21,19 @@ pub async fn insert_blog(blog_dto: BlogDto) -> Result<bool, ServerFnError> {
 
         let state = expect_context::<AppState>();
         let db = state.db();
+
+        println!("blog_title = {}", blog_dto.get_blog_title());
+        println!("tags = {}", blog_dto.get_tags());
+        println!(
+            "cover_image_base64 = {}",
+            &(blog_dto.get_cover_image_base64().unwrap())[0..50]
+        );
+
+        let cover_image_base64 = blog_dto.get_cover_image_base64().expect("图片base64错误");
+
+        let cover_image_dir = save_cover_image(&cover_image_base64).await?;
+
+        println!("cover_image_dir = {}", cover_image_dir);
 
         Ok(true)
     }
@@ -45,11 +63,72 @@ pub async fn load_blog_categories() -> Result<Vec<BlogCategoryDto>, ServerFnErro
             .map(|category| BlogCategoryDto::new(category.id, category.category_name))
             .collect::<Vec<BlogCategoryDto>>();
 
-        // println!("{:?}", category_dtos);
-
         Ok(category_dtos)
     }
 
     #[cfg(not(feature = "ssr"))]
     unreachable!("update_about_page should only run on the server");
+}
+
+/**
+ * 将图片base64保存到文件，并返回保存的文件路径
+ */
+async fn save_cover_image(base64_data: &str) -> Result<String, ServerFnError> {
+    use base64::engine::general_purpose::STANDARD;
+    use base64::Engine;
+
+    // 分离 header 和 body 数据
+    let mut parts = base64_data.split(',');
+
+    let header = match parts.next() {
+        Some(header) => header,
+        None => {
+            return Err(ServerFnError::ServerError("invalid base64 header".into()));
+        }
+    };
+
+    let data = match parts.next() {
+        Some(data) => data,
+        None => {
+            return Err(ServerFnError::ServerError("invalid base64 body".into()));
+        }
+    };
+
+    // 获取图片扩展名
+    let extension = match header {
+        "data:image/png;base64" => "png",
+        "data:image/jpeg;base64" => "jpg",
+        "data:image/jpg;base64" => "jpg",
+        "data:image/webp;base64" => "webp",
+        "data:image/gif;base64" => "gif",
+        _ => return Err(ServerFnError::ServerError("unsupported image type".into())),
+    };
+
+    // decode base64
+    let image_bytes = match STANDARD.decode(data) {
+        Ok(image_bytes) => image_bytes,
+        Err(_) => return Err(ServerFnError::ServerError("decode error".into())),
+    };
+
+    // 限制文件大小（例如 5MB）
+    if image_bytes.len() > 5 * 1024 * 1024 {
+        return Err(ServerFnError::ServerError(
+            "image too large, the image size shouldn't be larger than 5MB".into(),
+        ));
+    }
+
+    // 创建目录
+    let upload_dir = format!("./data{}", BLOG_COVER_DIR);
+    fs::create_dir_all(&upload_dir)?;
+
+    // 使用 系统时间 生成文件名
+    let duration_now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("系统时间获取错误！");
+    let filename = format!("{}.{}", duration_now.as_millis(), extension);
+    let filepath = format!("{}/{}", upload_dir, filename);
+
+    fs::write(&filepath, image_bytes)?;
+
+    Ok(format!("{}{}", BLOG_COVER_DIR, filename))
 }

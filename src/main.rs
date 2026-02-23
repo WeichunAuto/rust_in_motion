@@ -8,6 +8,7 @@ async fn main() -> anyhow::Result<()> {
     use leptos::prelude::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use rust_in_motion::app::*;
+    use tower_http::services::ServeDir;
 
     let conf = get_configuration(None).unwrap();
     let addr = conf.leptos_options.site_addr;
@@ -36,6 +37,10 @@ async fn main() -> anyhow::Result<()> {
                 move || shell(leptos_options.clone())
             },
         )
+        // 静态文件路由: /uploads -> data/uploads，用于存放blog的封面和正文图片
+        // 当浏览器访问 http://127.0.0.1:3001/uploads/blog/covers/1771838398341.jpg, 就相当于访问了 
+        // http://127.0.0.1:3001/data/uploads/blog/covers/1771838398341.jpg
+        .nest_service("/uploads", ServeDir::new("data/uploads"))
         .fallback(leptos_axum::file_and_error_handler(shell))
         .with_state(leptos_options);
 

@@ -6,3 +6,6 @@ pub const SUMMARY_DIR: &str = "article/about_me/summary.md";
 
 // about me 中 about page的目录位置
 pub const ABOUT_PAGE_DIR: &str = "article/about_me/about_this_page.md";
+
+// 博客封面的上传目录
+pub const BLOG_COVER_DIR: &str = "/uploads/blog/covers/";

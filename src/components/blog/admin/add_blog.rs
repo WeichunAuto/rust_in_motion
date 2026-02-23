@@ -1,4 +1,6 @@
 use leptos::prelude::*;
+use web_sys::wasm_bindgen::{prelude::Closure, JsCast};
+use web_sys::{FileReader, HtmlInputElement};
 
 use crate::{
     dto::blog_dto::BlogDto,
@@ -11,7 +13,9 @@ use crate::{
 #[component]
 pub fn AddBlog() -> impl IntoView {
     let submit = ServerAction::<InsertBlog>::new();
-    let (content, set_content) = signal(String::new());
+    // let (content, set_content) = signal(String::new());
+
+    let (cover_base64, set_cover_base64) = signal::<Option<String>>(None);
 
     let blog_category_resourse = OnceResource::new(load_blog_categories());
 
@@ -122,17 +126,22 @@ pub fn AddBlog() -> impl IntoView {
                         <label class="block text-sm font-medium text-gray-600">
                             "封面图片"
                         </label>
-                        <input
-                            type="file"
-                            name="cover_image"
-                            accept="image/*"
-                            class="block w-full text-sm text-gray-600
-                                   file:mr-4 file:py-2 file:px-4
-                                   file:rounded-md file:border-0
-                                   file:text-sm file:font-medium
-                                   file:bg-black file:text-white
-                                   hover:file:bg-gray-800"
+                        <input type="hidden"
+                            name="blog_dto[cover_image_base64]"
+                            value=move || cover_base64.get().unwrap_or_default()
                         />
+                        <CoverUploader set_base64=set_cover_base64/>
+                        // <input
+                        //     type="file"
+                        //     name="cover_image"
+                        //     accept="image/*"
+                        //     class="block w-full text-sm text-gray-600
+                        //            file:mr-4 file:py-2 file:px-4
+                        //            file:rounded-md file:border-0
+                        //            file:text-sm file:font-medium
+                        //            file:bg-black file:text-white
+                        //            hover:file:bg-gray-800"
+                        // />
                     </div>
 
                     {/* Markdown 正文 */}
@@ -171,5 +180,73 @@ pub fn AddBlog() -> impl IntoView {
                 </div>
             </div>
         </ActionForm>
+    }
+}
+
+/**
+ * 博客封面的上传组件
+ */
+#[component]
+pub fn CoverUploader(set_base64: WriteSignal<Option<String>>) -> impl IntoView {
+    let (preview, set_preview) = signal::<Option<String>>(None);
+
+    view! {
+        <div class="space-y-3">
+
+            <input
+                type="file"
+                accept="image/*"
+                class="block w-full text-sm text-gray-600
+                       file:mr-4 file:py-2 file:px-4
+                       file:rounded-md file:border-0
+                       file:text-sm file:font-medium
+                       file:bg-black file:text-white
+                       hover:file:bg-gray-800"
+                on:change=move |ev| {
+                    let input: HtmlInputElement = event_target(&ev);
+
+                    if let Some(files) = input.files() {
+                        if let Some(file) = files.get(0) {
+
+                            let reader = FileReader::new().unwrap();
+                            let reader_clone = reader.clone();
+
+                            let set_base64 = set_base64.clone();
+                            let set_preview = set_preview.clone();
+
+                            let onload = Closure::wrap(Box::new(move |_e: web_sys::Event| {
+                                if let Ok(result) = reader_clone.result() {
+                                    if let Some(base64) = result.as_string() {
+
+                                        // 存入外部 signal
+                                        set_base64.set(Some(base64.clone()));
+
+                                        // 本地预览
+                                        set_preview.set(Some(base64));
+                                    }
+                                }
+                            }) as Box<dyn FnMut(_)>);
+
+                            reader.set_onload(Some(onload.as_ref().unchecked_ref()));
+                            reader.read_as_data_url(&file).unwrap();
+
+                            onload.forget();
+                        }
+                    }
+                }
+            />
+
+            {
+                move || preview.get().map(|img| {
+                    view! {
+                        <img
+                            src={img}
+                            class="w-48 h-32 object-cover rounded-md border border-gray-200"
+                        />
+                    }
+                })
+            }
+
+        </div>
     }
 }

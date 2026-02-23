@@ -30,10 +30,15 @@ sea-orm = { version = "1.1.17", features = [
     "sqlx-postgres",
     "with-rust_decimal",
     "runtime-tokio",
+    "uuid"
 ], optional = true }
-web-sys = { version = "0.3", features = ["Storage", "Window", "MediaQueryList", "MediaQueryListEvent", "Navigator", "Clipboard"] }
+web-sys = { version = "0.3", features = ["Storage", "Window", "MediaQueryList", "MediaQueryListEvent", "Navigator", "Clipboard", "File", "HtmlInputElement", "FileReader", "Event", "FileList"] }
 # 用于把 markdown 转 html
 pulldown-cmark = "0.13.0"
+# 用于把图片转成 base64 编码
+base64 = "0.22"
+tower-http = { version = "0.6.8", features = ["fs"], optional = true}
+# uuid = { version = "1", features = ["v4", "serde"], optional = true  }
 
 
 
@@ -53,6 +58,7 @@ ssr = [
 
     "num_cpus",
     "sea-orm",
+    "tower-http", 
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
