@@ -17,24 +17,40 @@ use crate::{
 pub async fn insert_blog(blog_dto: BlogDto) -> Result<bool, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
-        use crate::state::app_state::AppState;
+        use crate::{entity::blog::ActiveModel, state::app_state::AppState};
+        use sea_orm::{ActiveModelTrait, ActiveValue::Set};
 
         let state = expect_context::<AppState>();
         let db = state.db();
 
-        println!("blog_title = {}", blog_dto.get_blog_title());
-        println!("tags = {}", blog_dto.get_tags());
-        println!(
-            "cover_image_base64 = {}",
-            &(blog_dto.get_cover_image_base64().unwrap())[0..50]
-        );
+        let content = blog_dto.get_content();
+        if content.is_none() {
+            return Err(ServerFnError::ServerError(
+                "You have to privide blog content with markdonw format!".to_string(),
+            ));
+        }
+
+        let tags = blog_dto
+            .get_tags()
+            .split(",")
+            .map(|tag| tag.trim().to_string())
+            .collect::<Vec<String>>();
 
         let cover_image_base64 = blog_dto.get_cover_image_base64().expect("图片base64错误");
 
         let cover_image_dir = save_cover_image(&cover_image_base64).await?;
 
-        println!("cover_image_dir = {}", cover_image_dir);
+        let new_blog = ActiveModel {
+            blog_title: Set(blog_dto.get_blog_title()),
+            introduction: Set(blog_dto.get_introduction()),
+            content: Set(content.unwrap()),
+            tags: Set(tags),
+            cover_image_url: Set(Some(cover_image_dir)),
+            category_id: Set(blog_dto.get_category_id()),
+            ..Default::default()
+        };
 
+        new_blog.insert(db).await?;
         Ok(true)
     }
 
