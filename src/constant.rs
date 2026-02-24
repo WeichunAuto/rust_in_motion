@@ -9,3 +9,6 @@ pub const ABOUT_PAGE_DIR: &str = "article/about_me/about_this_page.md";
 
 // 博客封面的上传目录
 pub const BLOG_COVER_DIR: &str = "/uploads/blog/covers/";
+
+// 博客内容的上传目录
+pub const BLOG_CONTENT_DIR: &str = "/uploads/blog/contents/";

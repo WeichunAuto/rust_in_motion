@@ -71,6 +71,7 @@ fn LikeView() -> impl IntoView {
                 <Tag>"Path Planning"</Tag>
                 <Tag>"Building My Physique"</Tag>
                 <Tag>"Running"</Tag>
+                <Tag>"Inline Skating"</Tag>
                 <Tag>"Hiking"</Tag>
                 <Tag>"Building Software to Solve Reall Problems"</Tag>
                 <Tag>"Product Thinking"</Tag>

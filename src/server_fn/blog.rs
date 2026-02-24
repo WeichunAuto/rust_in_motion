@@ -6,7 +6,7 @@ use std::{
 use leptos::prelude::*;
 
 use crate::{
-    constant::BLOG_COVER_DIR,
+    constant::{BLOG_CONTENT_DIR, BLOG_COVER_DIR},
     dto::{blog_category_dto::BlogCategoryDto, blog_dto::BlogDto},
 };
 
@@ -38,7 +38,7 @@ pub async fn insert_blog(blog_dto: BlogDto) -> Result<bool, ServerFnError> {
 
         let cover_image_base64 = blog_dto.get_cover_image_base64().expect("图片base64错误");
 
-        let cover_image_dir = save_cover_image(&cover_image_base64).await?;
+        let cover_image_dir = save_image(&cover_image_base64, BLOG_COVER_DIR).await?;
 
         let new_blog = ActiveModel {
             blog_title: Set(blog_dto.get_blog_title()),
@@ -56,6 +56,26 @@ pub async fn insert_blog(blog_dto: BlogDto) -> Result<bool, ServerFnError> {
 
     #[cfg(not(feature = "ssr"))]
     unreachable!("insert_blog should only run on the server");
+}
+
+/**
+ * 上传图片，用于博客markdown正文
+ */
+#[server]
+pub async fn upload_markdown_image(base64_data: String) -> Result<String, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use chrono::Local;
+
+        let date_path = Local::now().format("%Y-%m-%d").to_string();
+
+        let to_path = format!("{}{}/", BLOG_CONTENT_DIR, date_path);
+        let path = save_image(&base64_data, &to_path).await?;
+        Ok(path)
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("upload_markdown_image should only run on the server");
 }
 
 /**
@@ -89,7 +109,7 @@ pub async fn load_blog_categories() -> Result<Vec<BlogCategoryDto>, ServerFnErro
 /**
  * 将图片base64保存到文件，并返回保存的文件路径
  */
-async fn save_cover_image(base64_data: &str) -> Result<String, ServerFnError> {
+async fn save_image(base64_data: &str, to_path: &str) -> Result<String, ServerFnError> {
     use base64::engine::general_purpose::STANDARD;
     use base64::Engine;
 
@@ -134,17 +154,17 @@ async fn save_cover_image(base64_data: &str) -> Result<String, ServerFnError> {
     }
 
     // 创建目录
-    let upload_dir = format!("./data{}", BLOG_COVER_DIR);
+    let upload_dir = format!("./data{}", to_path);
     fs::create_dir_all(&upload_dir)?;
 
     // 使用 系统时间 生成文件名
     let duration_now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .expect("系统时间获取错误！");
+        .expect("get system time error！");
     let filename = format!("{}.{}", duration_now.as_millis(), extension);
     let filepath = format!("{}/{}", upload_dir, filename);
 
     fs::write(&filepath, image_bytes)?;
 
-    Ok(format!("{}{}", BLOG_COVER_DIR, filename))
+    Ok(format!("{}{}", to_path, filename))
 }

@@ -2,6 +2,7 @@ use leptos::prelude::*;
 use web_sys::wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{FileReader, HtmlInputElement};
 
+use crate::server_fn::blog::UploadMarkdownImage;
 use crate::{
     dto::blog_dto::BlogDto,
     server_fn::{
@@ -131,18 +132,11 @@ pub fn AddBlog() -> impl IntoView {
                             value=move || cover_base64.get().unwrap_or_default()
                         />
                         <CoverUploader set_base64=set_cover_base64/>
-                        // <input
-                        //     type="file"
-                        //     name="cover_image"
-                        //     accept="image/*"
-                        //     class="block w-full text-sm text-gray-600
-                        //            file:mr-4 file:py-2 file:px-4
-                        //            file:rounded-md file:border-0
-                        //            file:text-sm file:font-medium
-                        //            file:bg-black file:text-white
-                        //            hover:file:bg-gray-800"
-                        // />
+
                     </div>
+
+                    {/* 图片上传组件，用于markdown格式的博客内容中的图片 */ }
+                    <MarkdownImageUploader />
 
                     {/* Markdown 正文 */}
                     <div class="space-y-3">
@@ -245,6 +239,92 @@ pub fn CoverUploader(set_base64: WriteSignal<Option<String>>) -> impl IntoView {
                         />
                     }
                 })
+            }
+
+        </div>
+    }
+}
+
+#[component]
+pub fn MarkdownImageUploader() -> impl IntoView {
+    let upload_action = ServerAction::<UploadMarkdownImage>::new();
+    // let (_, set_preview_path) = signal::<Option<String>>(None);
+
+    view! {
+        <div class="space-y-3 border p-4 rounded-md">
+
+            <div class="font-medium text-sm">
+                "正文图片上传"
+            </div>
+
+            <input
+                type="file"
+                accept="image/*"
+                on:change=move |ev| {
+                    let input: HtmlInputElement = event_target(&ev);
+
+                    if let Some(files) = input.files() {
+                        if let Some(file) = files.get(0) {
+
+                            let reader = FileReader::new().unwrap();
+                            let reader_clone = reader.clone();
+                            let upload_action = upload_action.clone();
+
+                            let onload = Closure::wrap(Box::new(move |_e: web_sys::Event| {
+                                if let Ok(result) = reader_clone.result() {
+                                    if let Some(base64) = result.as_string() {
+                                        upload_action.dispatch(
+                                            UploadMarkdownImage {
+                                                base64_data: base64,
+                                            }
+                                        );
+                                    }
+                                }
+                            }) as Box<dyn FnMut(_)>);
+
+                            reader.set_onload(Some(onload.as_ref().unchecked_ref()));
+                            reader.read_as_data_url(&file).unwrap();
+                            onload.forget();
+                        }
+                    }
+                }
+            />
+
+            {/* 显示返回路径 */}
+            {
+                move || {
+                    upload_action.value().get().map(|res| {
+                        match res {
+                            Ok(path) => {
+                                // set_preview_path.set(Some(path.clone()));
+
+                                view! {
+                                    <div class="space-y-2">
+                                        <div class="text-green-600 text-sm">
+                                            "上传成功"
+                                        </div>
+
+                                        <input
+                                            type="text"
+                                            readonly
+                                            value=path.clone()
+                                            class="w-full border p-2 text-xs rounded"
+                                        />
+
+                                        <div class="text-xs text-gray-500">
+                                            "复制后粘贴到 Markdown 中"
+                                        </div>
+                                    </div>
+                                }.into_any()
+                            }
+                            Err(_) => view! {
+                                <div class="text-red-500 text-sm">
+                                    "上传失败"
+                                </div>
+                            }.into_any()
+                        }
+                    })
+                }
             }
 
         </div>

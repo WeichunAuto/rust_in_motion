@@ -38,8 +38,7 @@ pulldown-cmark = "0.13.0"
 # 用于把图片转成 base64 编码
 base64 = "0.22"
 tower-http = { version = "0.6.8", features = ["fs"], optional = true}
-# uuid = { version = "1", features = ["v4", "serde"], optional = true  }
-
+chrono = { version = "0.4", features = ["clock"] }
 
 
 [features]
