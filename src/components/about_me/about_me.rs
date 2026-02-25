@@ -208,7 +208,6 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
                 </Suspense>
             </div>
         </div>
-
     }
 }
 

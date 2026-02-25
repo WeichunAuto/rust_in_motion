@@ -36,9 +36,12 @@ pub async fn insert_blog(blog_dto: BlogDto) -> Result<bool, ServerFnError> {
             .map(|tag| tag.trim().to_string())
             .collect::<Vec<String>>();
 
-        let cover_image_base64 = blog_dto.get_cover_image_base64().expect("图片base64错误");
+        let cover_image_base64_opt = blog_dto.get_cover_image_base64();
 
-        let cover_image_dir = save_image(&cover_image_base64, BLOG_COVER_DIR).await?;
+        let cover_image_dir = match cover_image_base64_opt {
+            Some(cover_image_base64) => save_image(&cover_image_base64, BLOG_COVER_DIR).await?,
+            None => String::new()
+        };
 
         let new_blog = ActiveModel {
             blog_title: Set(blog_dto.get_blog_title()),

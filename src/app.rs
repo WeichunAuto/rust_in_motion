@@ -10,7 +10,7 @@ use crate::components::{
     about_me::admin::{
         update_about_page::UpdateAboutPage, update_quez::UpdateQuez, update_summary::UpdateSummary,
     },
-    blog::admin::{add_blog::AddBlog, add_or_edit_blog::AddOrEditBlog, edit_blog::EditBlog},
+    blog::admin::{add_blog::AddBlog, blog_list::BlogList},
     header::{headers::Headers, sectors::Sectors},
 };
 use leptos::ev::resize;
@@ -90,8 +90,7 @@ pub fn App() -> impl IntoView {
                         </div>
                     }>
                         <Route path=path!("add_blog") view=AddBlog/>
-                        <Route path=path!("edit_blog") view=EditBlog/>
-                        <Route path=path!("blog_lists") view=UpdateQuez/>
+                        <Route path=path!("blog_list") view=BlogList/>
                     </ParentRoute>
 
 

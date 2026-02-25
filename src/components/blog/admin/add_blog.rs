@@ -1,4 +1,6 @@
+use leptos::logging::log;
 use leptos::prelude::*;
+use leptos_router::components::A;
 use web_sys::wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{FileReader, HtmlInputElement};
 
@@ -25,11 +27,17 @@ pub fn AddBlog() -> impl IntoView {
              <div class="min-h-screen bg-white px-6 py-12">
 
                 <div class="max-w-3xl mx-auto space-y-10">
+                    <div class="w-full flex flex-row justify-between">
+                        {/* 标题 */}
+                        <h1 class="text-3xl font-semibold tracking-tight">
+                            "Blog 发布"
+                        </h1>
 
-                    {/* 标题 */}
-                    <h1 class="text-3xl font-semibold tracking-tight">
-                        "Blog 发布"
-                    </h1>
+                        <div class="">
+                            <A href="../blog_list">"> 进入博客列表"</A>
+                        </div>
+                    </div>
+
 
                     {/* 博客标题 */}
                     <div class="space-y-2">
@@ -174,6 +182,19 @@ pub fn AddBlog() -> impl IntoView {
                 </div>
             </div>
         </ActionForm>
+
+        {
+            // log!("submit version = {}", submit.version().get());
+            let message = move || if submit.version().get() > 0 {
+                "提交成功了"
+            } else {
+                ""
+            };
+
+            view! {
+                <div class="text-green-600">{move || message()}</div>
+            }
+        }
     }
 }
 
@@ -326,7 +347,6 @@ pub fn MarkdownImageUploader() -> impl IntoView {
                     })
                 }
             }
-
         </div>
     }
 }
