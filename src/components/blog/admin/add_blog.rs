@@ -184,13 +184,11 @@ pub fn AddBlog() -> impl IntoView {
         </ActionForm>
 
         {
-            // log!("submit version = {}", submit.version().get());
             let message = move || if submit.version().get() > 0 {
                 "提交成功了"
             } else {
                 ""
             };
-
             view! {
                 <div class="text-green-600">{move || message()}</div>
             }

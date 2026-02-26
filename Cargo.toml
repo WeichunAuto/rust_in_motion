@@ -16,7 +16,7 @@ leptos_meta = { version = "0.8.0" }
 tokio = { version = "1", features = ["rt-multi-thread", "rt", "fs", "io-util", "macros"], optional = true }
 wasm-bindgen = { version = "0.2.108", optional = true }
 
-
+reactive_stores = "0.3.1"
 serde = { version = "1.0.225", features = ["derive"] } 
 serde_json = { version = "1.0.145" }
 anyhow = "1.0.100"

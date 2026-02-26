@@ -30,24 +30,27 @@ pub async fn insert_blog(blog_dto: BlogDto) -> Result<bool, ServerFnError> {
             ));
         }
 
-        let tags = blog_dto
-            .get_tags()
-            .split(",")
-            .map(|tag| tag.trim().to_string())
-            .collect::<Vec<String>>();
+        let vtags = match blog_dto.get_tags() {
+            Some(tags) => tags
+                .split(",")
+                .map(|tag| tag.trim().to_string())
+                .collect::<Vec<String>>(),
+            None => Vec::new(),
+        };
 
         let cover_image_base64_opt = blog_dto.get_cover_image_base64();
 
+        // 不上传图片，则dir为空串
         let cover_image_dir = match cover_image_base64_opt {
             Some(cover_image_base64) => save_image(&cover_image_base64, BLOG_COVER_DIR).await?,
-            None => String::new()
+            None => String::new(),
         };
 
         let new_blog = ActiveModel {
             blog_title: Set(blog_dto.get_blog_title()),
             introduction: Set(blog_dto.get_introduction()),
             content: Set(content.unwrap()),
-            tags: Set(tags),
+            tags: Set(vtags),
             cover_image_url: Set(Some(cover_image_dir)),
             category_id: Set(blog_dto.get_category_id()),
             ..Default::default()
@@ -107,6 +110,59 @@ pub async fn load_blog_categories() -> Result<Vec<BlogCategoryDto>, ServerFnErro
 
     #[cfg(not(feature = "ssr"))]
     unreachable!("update_about_page should only run on the server");
+}
+
+/**
+ * 根据类型ID, 加载博客
+ */
+#[server]
+pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<BlogDto>, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use crate::entity::blog;
+        use crate::entity::prelude::Blog;
+        use sea_orm::{EntityTrait, QueryFilter, QueryOrder};
+
+        use sea_orm::{ColumnTrait, Condition};
+
+        use crate::state::app_state::AppState;
+
+        let state = expect_context::<AppState>();
+        let db = state.db();
+
+        let mut conditions = Condition::all();
+        conditions = conditions.add(blog::Column::CategoryId.eq(category_id));
+
+        let blog_vec = Blog::find()
+            .filter(conditions)
+            .order_by_desc(blog::Column::CreateAt)
+            .all(db)
+            .await?;
+
+        let blog_dtos = blog_vec
+            .into_iter()
+            .map(|blog| {
+                BlogDto::new(
+                    Some(blog.id),
+                    blog.blog_title,
+                    blog.introduction,
+                    None,
+                    None,
+                    Some(blog.tags),
+                    blog.cover_image_url,
+                    None,
+                    blog.category_id,
+                    blog.create_at.unwrap_or_default().to_string(),
+                    blog.is_featured.unwrap_or_default(),
+                )
+            })
+            .collect::<Vec<BlogDto>>();
+
+        Ok(blog_dtos)
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("load_blogs_by_category should only run on the server");
 }
 
 /**
