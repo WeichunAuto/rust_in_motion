@@ -1,10 +1,9 @@
-use reactive_stores::Store;
 use serde::{Deserialize, Serialize};
 
 /**
  * 博客DTO
  */
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Store)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct BlogDto {
     id: Option<i32>,
     blog_title: String,
@@ -17,8 +16,8 @@ pub struct BlogDto {
     cover_image_url: Option<String>,
     cover_image_base64: Option<String>,
     category_id: i32,
-    create_at: String,
-    is_featured: bool,
+    create_at: Option<String>,
+    is_featured: Option<bool>,
 }
 
 impl BlogDto {
@@ -34,9 +33,8 @@ impl BlogDto {
         cover_image_url: Option<String>,
         cover_image_base64: Option<String>,
         category_id: i32,
-        create_at: String,
-        is_featured: bool,
-
+        create_at: Option<String>,
+        is_featured: Option<bool>,
     ) -> Self {
         Self {
             id,
@@ -89,11 +87,11 @@ impl BlogDto {
         self.category_id
     }
 
-    pub fn get_create_at(&self) -> String {
+    pub fn get_create_at(&self) -> Option<String> {
         self.create_at.clone()
     }
 
-    pub fn get_is_featured(&self) -> bool {
+    pub fn get_is_featured(&self) -> Option<bool> {
         self.is_featured
     }
 }

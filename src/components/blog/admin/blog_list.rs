@@ -15,7 +15,7 @@ pub fn BlogList() -> impl IntoView {
 
         <div class="min-h-screen bg-white px-6 py-12">
 
-            <div class="max-w-3xl mx-auto flex flex-col gap-2">
+            <div class="max-w-4xl mx-auto flex flex-col gap-2">
                 <div class="flex flex-row gap-2">
                     <Suspense fallback=move || view! {<div>"category load...."</div>}>
                         {
@@ -61,7 +61,7 @@ pub fn BlogList() -> impl IntoView {
                 </div>
 
                 // 详细列表部分
-                <div class="border">
+                <div class="flex flex-col gap-2">
                     <ListByCategory selected_category=selected_category/>
                 </div>
             </div>

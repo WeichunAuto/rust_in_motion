@@ -152,8 +152,8 @@ pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<BlogDto>, Se
                     blog.cover_image_url,
                     None,
                     blog.category_id,
-                    blog.create_at.unwrap_or_default().to_string(),
-                    blog.is_featured.unwrap_or_default(),
+                    Some(blog.create_at.unwrap_or_default().to_string()),
+                    Some(blog.is_featured.unwrap_or_default()),
                 )
             })
             .collect::<Vec<BlogDto>>();
