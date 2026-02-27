@@ -166,6 +166,51 @@ pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<BlogDto>, Se
 }
 
 /**
+ * 将 blog 置顶或取消置顶
+ */
+#[server]
+pub async fn toggle_featured_by_id(
+    id: i32,
+    is_featured: Option<bool>,
+) -> Result<bool, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use sea_orm::{ActiveValue::Set, DbErr};
+        use sea_orm::EntityTrait;
+
+        use crate::{
+            entity::blog::{self, ActiveModel},
+            state::app_state::AppState,
+        };
+
+        let state = expect_context::<AppState>();
+        let db = state.db();
+
+        let rt = blog::Entity::update(ActiveModel {
+            id: Set(id),
+            is_featured: Set(Some(!is_featured.unwrap_or_default())),
+            ..Default::default()
+        })
+        .exec(db)
+        .await;
+
+        match rt {
+            Ok(_) => {
+                return Ok(true)
+            }
+            Err(DbErr::RecordNotUpdated) => {
+                return Ok(false)
+            }
+            Err(_) => {
+                return Ok(false)
+            }
+        }
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("load_blogs_by_category should only run on the server");
+}
+/**
  * 将图片base64保存到文件，并返回保存的文件路径
  */
 async fn save_image(base64_data: &str, to_path: &str) -> Result<String, ServerFnError> {
