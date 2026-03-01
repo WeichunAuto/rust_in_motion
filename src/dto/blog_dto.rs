@@ -94,4 +94,8 @@ impl BlogDto {
     pub fn get_is_featured(&self) -> Option<bool> {
         self.is_featured
     }
+
+    pub fn set_is_featured(&mut self, target_featured: Option<bool>) {
+        self.is_featured = target_featured;
+    }
 }

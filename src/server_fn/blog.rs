@@ -116,7 +116,7 @@ pub async fn load_blog_categories() -> Result<Vec<BlogCategoryDto>, ServerFnErro
  * 根据类型ID, 加载博客
  */
 #[server]
-pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<BlogDto>, ServerFnError> {
+pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<RwSignal<BlogDto>>, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
         use crate::entity::blog;
@@ -142,21 +142,23 @@ pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<BlogDto>, Se
         let blog_dtos = blog_vec
             .into_iter()
             .map(|blog| {
-                BlogDto::new(
-                    Some(blog.id),
-                    blog.blog_title,
-                    blog.introduction,
-                    None,
-                    None,
-                    Some(blog.tags),
-                    blog.cover_image_url,
-                    None,
-                    blog.category_id,
-                    Some(blog.create_at.unwrap_or_default().to_string()),
-                    Some(blog.is_featured.unwrap_or_default()),
+                RwSignal::new(
+                    BlogDto::new(
+                        Some(blog.id),
+                        blog.blog_title,
+                        blog.introduction,
+                        None,
+                        None,
+                        Some(blog.tags),
+                        blog.cover_image_url,
+                        None,
+                        blog.category_id,
+                        Some(blog.create_at.unwrap_or_default().to_string()),
+                        Some(blog.is_featured.unwrap_or_default()),
+                    )
                 )
             })
-            .collect::<Vec<BlogDto>>();
+            .collect::<Vec<RwSignal<BlogDto>>>();
 
         Ok(blog_dtos)
     }
@@ -167,16 +169,17 @@ pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<BlogDto>, Se
 
 /**
  * 将 blog 置顶或取消置顶
+ * 返回：置顶或取消置顶对应的 blog id, 和 置顶或取消后对应的 target featured
  */
 #[server]
 pub async fn toggle_featured_by_id(
     id: i32,
     is_featured: Option<bool>,
-) -> Result<bool, ServerFnError> {
+) -> Result<Option<(i32, bool)>, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
-        use sea_orm::{ActiveValue::Set, DbErr};
         use sea_orm::EntityTrait;
+        use sea_orm::{ActiveValue::Set, DbErr};
 
         use crate::{
             entity::blog::{self, ActiveModel},
@@ -195,15 +198,9 @@ pub async fn toggle_featured_by_id(
         .await;
 
         match rt {
-            Ok(_) => {
-                return Ok(true)
-            }
-            Err(DbErr::RecordNotUpdated) => {
-                return Ok(false)
-            }
-            Err(_) => {
-                return Ok(false)
-            }
+            Ok(_) => return Ok(Some((id, !is_featured.unwrap_or_default()))),
+            Err(DbErr::RecordNotUpdated) => return Ok(None),
+            Err(_) => return Ok(None),
         }
     }
 
