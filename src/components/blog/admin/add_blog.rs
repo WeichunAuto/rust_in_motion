@@ -6,7 +6,7 @@ use web_sys::{FileReader, HtmlInputElement};
 
 use crate::server_fn::blog::UploadMarkdownImage;
 use crate::{
-    dto::blog_dto::BlogDto,
+    dto::blog_request_dto::BlogRequestDto,
     server_fn::{
         blog::{load_blog_categories, InsertBlog},
         common::markdown_to_html,

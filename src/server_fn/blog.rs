@@ -7,14 +7,14 @@ use leptos::prelude::*;
 
 use crate::{
     constant::{BLOG_CONTENT_DIR, BLOG_COVER_DIR},
-    dto::{blog_category_dto::BlogCategoryDto, blog_dto::BlogDto},
+    dto::{blog_category_dto::BlogCategoryDto, blog_request_dto::BlogRequestDto, blog_response_dto::BlogResponsetDto},
 };
 
 /**
  * 发布博客
  */
 #[server]
-pub async fn insert_blog(blog_dto: BlogDto) -> Result<bool, ServerFnError> {
+pub async fn insert_blog(blog_dto: BlogRequestDto) -> Result<bool, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
         use crate::{entity::blog::ActiveModel, state::app_state::AppState};
@@ -116,7 +116,9 @@ pub async fn load_blog_categories() -> Result<Vec<BlogCategoryDto>, ServerFnErro
  * 根据类型ID, 加载博客
  */
 #[server]
-pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<RwSignal<BlogDto>>, ServerFnError> {
+pub async fn load_blogs_by_category(
+    category_id: i32,
+) -> Result<Vec<RwSignal<BlogRequestDto>>, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
         use crate::entity::blog;
@@ -142,23 +144,21 @@ pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<RwSignal<Blo
         let blog_dtos = blog_vec
             .into_iter()
             .map(|blog| {
-                RwSignal::new(
-                    BlogDto::new(
-                        Some(blog.id),
-                        blog.blog_title,
-                        blog.introduction,
-                        None,
-                        None,
-                        Some(blog.tags),
-                        blog.cover_image_url,
-                        None,
-                        blog.category_id,
-                        Some(blog.create_at.unwrap_or_default().to_string()),
-                        Some(blog.is_featured.unwrap_or_default()),
-                    )
-                )
+                RwSignal::new(BlogRequestDto::new(
+                    Some(blog.id),
+                    blog.blog_title,
+                    blog.introduction,
+                    None,
+                    None,
+                    Some(blog.tags),
+                    blog.cover_image_url,
+                    None,
+                    blog.category_id,
+                    Some(blog.create_at.unwrap_or_default().to_string()),
+                    Some(blog.is_featured.unwrap_or_default()),
+                ))
             })
-            .collect::<Vec<RwSignal<BlogDto>>>();
+            .collect::<Vec<RwSignal<BlogRequestDto>>>();
 
         Ok(blog_dtos)
     }
@@ -166,6 +166,63 @@ pub async fn load_blogs_by_category(category_id: i32) -> Result<Vec<RwSignal<Blo
     #[cfg(not(feature = "ssr"))]
     unreachable!("load_blogs_by_category should only run on the server");
 }
+
+/**
+ * 根据类型ID, 加载博客
+ */
+#[server]
+pub async fn load_resblogs_by_category(
+    category_id: i32,
+) -> Result<Vec<RwSignal<BlogResponsetDto>>, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use crate::entity::blog;
+        use crate::entity::prelude::Blog;
+        use sea_orm::{EntityTrait, QueryFilter, QueryOrder};
+
+        use sea_orm::{ColumnTrait, Condition};
+
+        use crate::state::app_state::AppState;
+
+        let state = expect_context::<AppState>();
+        let db = state.db();
+
+        let mut conditions = Condition::all();
+        conditions = conditions.add(blog::Column::CategoryId.eq(category_id));
+
+        let blog_vec = Blog::find()
+            .filter(conditions)
+            .order_by_desc(blog::Column::IsFeatured)
+            .order_by_desc(blog::Column::CreateAt)
+            .all(db)
+            .await?;
+
+        let blog_resdtos = blog_vec
+            .into_iter()
+            .map(|blog| {
+                RwSignal::new(
+                    BlogResponsetDto::new(
+                        blog.id,
+                        blog.blog_title,
+                        blog.introduction,
+                        String::new(),
+                        blog.tags,
+                        blog.cover_image_url,
+                        blog.category_id,
+                        blog.create_at.unwrap_or_default().to_string(),
+                        blog.is_featured.unwrap_or_default(),
+                    )
+                )
+            })
+            .collect::<Vec<RwSignal<BlogResponsetDto>>>();
+
+        Ok(blog_resdtos)
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("load_blogs_by_category should only run on the server");
+}
+
 
 /**
  * 将 blog 置顶或取消置顶

@@ -1,9 +1,9 @@
-use leptos::{logging::log, prelude::*};
+use leptos::prelude::*;
 use web_sys::window;
 
 use crate::{
-    dto::blog_dto::BlogDto,
-    server_fn::blog::{load_blogs_by_category, toggle_featured_by_id},
+    dto::blog_response_dto::BlogResponsetDto,
+    server_fn::blog::{load_resblogs_by_category, toggle_featured_by_id},
 };
 
 #[component]
@@ -11,11 +11,11 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
     // 请求博客数据
     let blog_data_resource = Resource::new(
         move || selected_category.get(),
-        |category_id| load_blogs_by_category(category_id),
+        |category_id| load_resblogs_by_category(category_id),
     );
 
     // Signal 管理 Vec<BlogDto>
-    let (blogs_data, set_blogs_data) = signal(Vec::<RwSignal<BlogDto>>::new());
+    let (blogs_data, set_blogs_data) = signal(Vec::<RwSignal<BlogResponsetDto>>::new());
 
     // 置顶 和 取消置顶 的请求Action
     let toggle_featured_action = Action::new(|input: &(i32, Option<bool>)| {
@@ -32,10 +32,10 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
         set_blogs_data.update(|blogs_signal| {
             if let Some(blog_dto_signal) = blogs_signal
                 .iter_mut()
-                .find(|target_blog| target_blog.get_untracked().get_id().unwrap_or_default() == id)
+                .find(|target_blog| target_blog.get_untracked().get_id() == id)
             {
                 blog_dto_signal.update(|blog_dto| {
-                    blog_dto.set_is_featured(Some(target_featured));
+                    blog_dto.set_is_featured(target_featured);
                 });
             }
         });
@@ -64,7 +64,7 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
                 view! {
                     <ForEnumerate
                         each=move || blogs_data.get()
-                        key=|blog_signal| blog_signal.with_untracked(|blog| blog.get_id().unwrap_or_default()) // 相比以下方式，with_untracked有更好的性能
+                        key=|blog_signal| blog_signal.with_untracked(|blog| blog.get_id()) // 相比以下方式，with_untracked有更好的性能
                         // key = |blog_signal| blog_signal.get().get_id().unwrap_or_default() // 这种因为.get()是响应式的，如果响应前后的id不一样，则容易产生bug
                         children=move |_, blog_signal| {
 
@@ -73,7 +73,7 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
 
                             // 创建响应式的值
                             let id = Memo::new(move |_| {
-                                blog.get().get_id().unwrap_or_default()
+                                blog.get().get_id()
                             });
 
                             let title = Memo::new(move |_| {
@@ -87,14 +87,14 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
                             });
 
                             let create_at = Memo::new(move |_| {
-                                let mut date = blog.get().get_create_at().unwrap_or_default();
+                                let mut date = blog.get().get_create_at();
                                 date.truncate(16);
                                 date
                             });
 
                             // 关键：为 is_featured 创建单独的 memo
                             let is_featured = Memo::new(move |_| {
-                                let value = blog.get().get_is_featured().unwrap_or_default();
+                                let value = blog.get().get_is_featured();
                                 value
                             });
 
