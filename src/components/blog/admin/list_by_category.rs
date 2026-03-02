@@ -3,7 +3,7 @@ use web_sys::window;
 
 use crate::{
     dto::blog_response_dto::BlogResponsetDto,
-    server_fn::blog::{load_resblogs_by_category, toggle_featured_by_id},
+    server_fn::blog::{delete_blog_by_id, load_resblogs_by_category, toggle_featured_by_id},
 };
 
 #[component]
@@ -26,13 +26,19 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
         }
     });
 
+    // 删除 blog 的请求Action
+    let delete_blog_action = Action::new(|blog_id: &i32| {
+        let blog_id = *blog_id;
+        async move { delete_blog_by_id(blog_id).await }
+    });
+
     // 置顶 或 取消置顶后，更新前端信号
-    let update_featured = move |id: i32, target_featured: bool| {
+    let update_view_for_featured = move |blog_id: i32, target_featured: bool| {
         // update 是对原始vec的直接修改，不会 clone() vec。 比 map 和 filter 更加高效。
         set_blogs_data.update(|blogs_signal| {
             if let Some(blog_dto_signal) = blogs_signal
                 .iter_mut()
-                .find(|target_blog| target_blog.get_untracked().get_id() == id)
+                .find(|target_blog| target_blog.get_untracked().get_id() == blog_id)
             {
                 blog_dto_signal.update(|blog_dto| {
                     blog_dto.set_is_featured(target_featured);
@@ -41,15 +47,33 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
         });
     };
 
-    // 使用 watch 监听 toggle_featured_action 的结果，避免无限循环
+    // 删除一个博客后，更新前端信号
+    let update_view_for_delete = move |blog_id| {
+        set_blogs_data.update(|blogs_signal| {
+            blogs_signal.retain(|blog_dto_signal| blog_dto_signal.get_untracked().get_id() != blog_id);
+        });
+    };
+
+    // 监听 toggle_featured_action 的结果，避免无限循环
     Effect::watch(
         move || toggle_featured_action.value().get(),
         move |new_value, _old_value, _| {
-            if let Some(Ok(Some((id, target_featured)))) = new_value {
-                update_featured(*id, *target_featured);
+            if let Some(Ok(Some((blog_id, target_featured)))) = new_value {
+                update_view_for_featured(*blog_id, *target_featured);
             }
         },
         false, // 只在变化时执行，第一次不立即执行
+    );
+
+    // 监听 delete_blog_action 的执行结果
+    Effect::watch(
+        move || delete_blog_action.value().get(),
+        move |new_value, _old_value, _| {
+            if let Some(Ok(blog_id)) = new_value {
+                update_view_for_delete(*blog_id);
+            }
+        },
+        false,
     );
 
     view! {
@@ -94,8 +118,7 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
 
                             // 关键：为 is_featured 创建单独的 memo
                             let is_featured = Memo::new(move |_| {
-                                let value = blog.get().get_is_featured();
-                                value
+                                blog.get().get_is_featured()
                             });
 
                             view! {
@@ -168,7 +191,16 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
 
                                             view! {
                                                 <div class="flex flex-col gap-2">
-                                                    <button class="border text-sm rounded p-2">"删 除"</button>
+                                                    <button class="border text-sm rounded p-2"
+                                                        on:click= move |_| {
+                                                            if let Some(win) = window() {
+                                                                let confirmed = win.confirm_with_message("你确定要 删除 该博客吗？").unwrap_or(false);
+                                                                if confirmed {
+                                                                    delete_blog_action.dispatch(id.get());
+                                                                }
+                                                            }
+                                                        }
+                                                    >"删 除"</button>
                                                     <button class="border text-sm rounded p-2"
                                                         on:click= move |_| {
                                                             if let Some(win) = window() {

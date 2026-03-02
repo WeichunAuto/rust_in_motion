@@ -7,7 +7,10 @@ use leptos::prelude::*;
 
 use crate::{
     constant::{BLOG_CONTENT_DIR, BLOG_COVER_DIR},
-    dto::{blog_category_dto::BlogCategoryDto, blog_request_dto::BlogRequestDto, blog_response_dto::BlogResponsetDto},
+    dto::{
+        blog_category_dto::BlogCategoryDto, blog_request_dto::BlogRequestDto,
+        blog_response_dto::BlogResponsetDto,
+    },
 };
 
 /**
@@ -200,19 +203,17 @@ pub async fn load_resblogs_by_category(
         let blog_resdtos = blog_vec
             .into_iter()
             .map(|blog| {
-                RwSignal::new(
-                    BlogResponsetDto::new(
-                        blog.id,
-                        blog.blog_title,
-                        blog.introduction,
-                        String::new(),
-                        blog.tags,
-                        blog.cover_image_url,
-                        blog.category_id,
-                        blog.create_at.unwrap_or_default().to_string(),
-                        blog.is_featured.unwrap_or_default(),
-                    )
-                )
+                RwSignal::new(BlogResponsetDto::new(
+                    blog.id,
+                    blog.blog_title,
+                    blog.introduction,
+                    String::new(),
+                    blog.tags,
+                    blog.cover_image_url,
+                    blog.category_id,
+                    blog.create_at.unwrap_or_default().to_string(),
+                    blog.is_featured.unwrap_or_default(),
+                ))
             })
             .collect::<Vec<RwSignal<BlogResponsetDto>>>();
 
@@ -222,7 +223,6 @@ pub async fn load_resblogs_by_category(
     #[cfg(not(feature = "ssr"))]
     unreachable!("load_blogs_by_category should only run on the server");
 }
-
 
 /**
  * 将 blog 置顶或取消置顶
@@ -258,6 +258,47 @@ pub async fn toggle_featured_by_id(
             Ok(_) => return Ok(Some((id, !is_featured.unwrap_or_default()))),
             Err(DbErr::RecordNotUpdated) => return Ok(None),
             Err(_) => return Ok(None),
+        }
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("load_blogs_by_category should only run on the server");
+}
+
+/**
+ * 根据 blog id 删除博客
+ */
+#[server]
+pub async fn delete_blog_by_id(blog_id: i32) -> Result<i32, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use sea_orm::EntityTrait;
+
+        use crate::{
+            entity::blog::{self},
+            state::app_state::AppState,
+        };
+
+        let state = expect_context::<AppState>();
+        let db = state.db();
+
+        let rt = blog::Entity::delete_by_id(blog_id).exec(db).await;
+        match rt {
+            Ok(deleted_blog) => {
+                if deleted_blog.rows_affected > 0 {
+                    return Ok(blog_id);
+                } else {
+                    return Err(ServerFnError::ServerError(String::from(
+                        "blog id not exists.",
+                    )));
+                }
+            }
+            Err(e) => {
+                return Err(ServerFnError::ServerError(format!(
+                    "database operation error: {}.",
+                    e
+                )));
+            }
         }
     }
 
