@@ -12,6 +12,7 @@ pub struct Model {
     #[sea_orm(unique)]
     pub menu_name: String,
     pub create_at: Option<DateTimeWithTimeZone>,
+    pub display_order: Option<i32>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
