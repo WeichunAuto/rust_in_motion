@@ -1,8 +1,10 @@
 use leptos_router::{hooks::use_params, params::Params};
 
+use crate::components::{
+    about_me::about_me::AboutMeSector,
+    common::{ElseIf, Fallback, If, Then},
+};
 use leptos::prelude::*;
-use crate::components::{about_me::about_me::AboutMeSector, common::{ElseIf, Fallback, If, Then}};
-
 
 // 不同栏目切换的URL路径参数
 #[derive(Params, PartialEq)]
@@ -26,6 +28,7 @@ pub fn Sectors() -> impl IntoView {
     let is_about_me = Signal::derive(move || sector.get()() == "About_Me");
     let is_robotics = Signal::derive(move || sector.get()() == "Robotics");
     let is_web = Signal::derive(move || sector.get()() == "Web");
+    let is_product = Signal::derive(move || sector.get()() == "Product");
     let is_tool = Signal::derive(move || sector.get()() == "Tools");
     view! {
         <div>
@@ -36,6 +39,7 @@ pub fn Sectors() -> impl IntoView {
                 <ElseIf slot condition=is_robotics><p>"这是 robotics 栏目"</p></ElseIf>
                 <ElseIf slot condition=is_web><p>"这是 Web 栏目"</p></ElseIf>
                 <ElseIf slot condition=is_tool><p>"这是 Tools 栏目"</p></ElseIf>
+                <ElseIf slot condition=is_product><p>"这是 Product 栏目"</p></ElseIf>
                 <Fallback slot><p>"进入了fallback分支！"</p></Fallback>
             </If>
         </div>
