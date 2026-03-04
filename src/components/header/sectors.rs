@@ -2,6 +2,7 @@ use leptos_router::{hooks::use_params, params::Params};
 
 use crate::components::{
     about_me::about_me::AboutMeSector,
+    blog::sector_page::SectorPage,
     common::{ElseIf, Fallback, If, Then},
 };
 use leptos::prelude::*;
@@ -37,7 +38,7 @@ pub fn Sectors() -> impl IntoView {
                 <Then slot:then><ProjectsSector /></Then>
                 <ElseIf slot condition=is_about_me><AboutMeSector /></ElseIf>
                 <ElseIf slot condition=is_robotics><p>"这是 robotics 栏目"</p></ElseIf>
-                <ElseIf slot condition=is_web><p>"这是 Web 栏目"</p></ElseIf>
+                <ElseIf slot condition=is_web><SectorPage category_id=2 /></ElseIf>
                 <ElseIf slot condition=is_tool><p>"这是 Tools 栏目"</p></ElseIf>
                 <ElseIf slot condition=is_product><p>"这是 Product 栏目"</p></ElseIf>
                 <Fallback slot><p>"进入了fallback分支！"</p></Fallback>

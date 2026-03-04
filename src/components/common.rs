@@ -62,7 +62,7 @@ pub fn Tag(
             </div>
         },
         TagType::Tag => view! {
-            <div class="bg-rose-100 text-sm font-light text-rose-900">
+            <div class="bg-orange-100 text-xs font-light px-2 py-0.5 text-orange-600 rounded-lg">
                 {children()}
             </div>
         },
