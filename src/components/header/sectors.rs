@@ -37,7 +37,7 @@ pub fn Sectors() -> impl IntoView {
                 // The `If` component always expects a `Then` child for `then_slot`
                 <Then slot:then><ProjectsSector /></Then>
                 <ElseIf slot condition=is_about_me><AboutMeSector /></ElseIf>
-                <ElseIf slot condition=is_robotics><p>"这是 robotics 栏目"</p></ElseIf>
+                <ElseIf slot condition=is_robotics><p><SectorPage category_id=1 /></p></ElseIf>
                 <ElseIf slot condition=is_web><SectorPage category_id=2 /></ElseIf>
                 <ElseIf slot condition=is_tool><p>"这是 Tools 栏目"</p></ElseIf>
                 <ElseIf slot condition=is_product><p>"这是 Product 栏目"</p></ElseIf>

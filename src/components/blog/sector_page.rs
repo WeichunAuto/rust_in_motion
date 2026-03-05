@@ -54,14 +54,21 @@ pub fn SectorPage(category_id: i32) -> impl IntoView {
                                                     // 封面图
                                                     {
                                                         move || {
-                                                            cover().map(|url| {
-                                                                view! {
+                                                            match cover() {
+                                                                Some(url) =>
+                                                                    view! {
+                                                                        <img
+                                                                            src=url
+                                                                            class="w-full h-48 object-cover"
+                                                                        />
+                                                                    }.into_any(),
+                                                                None => view! {
                                                                     <img
-                                                                        src=url
-                                                                        class="w-full h-48 object-cover"
+                                                                        src="images/blog_default.jpg"
+                                                                            class="w-full h-48 object-cover"
                                                                     />
-                                                                }
-                                                            })
+                                                                }.into_any()
+                                                            }
                                                         }
                                                     }
 
