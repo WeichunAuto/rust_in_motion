@@ -1,7 +1,9 @@
 use leptos::{logging::log, prelude::*};
+use leptos_router::components::A;
 
 use crate::{
     components::common::Tag,
+    dto::blog_response_dto::BlogResponsetDto,
     server_fn::{blog::load_resblogs_by_category, common::TagType},
 };
 
@@ -9,7 +11,7 @@ use crate::{
  * Web 模块组件
  */
 #[component]
-pub fn SectorPage(category_id: i32) -> impl IntoView {
+pub fn BlogListPage(category_id: i32) -> impl IntoView {
     // 请求博客数据
     let blog_data_resource = OnceResource::new(load_resblogs_by_category(category_id));
 
@@ -49,8 +51,10 @@ pub fn SectorPage(category_id: i32) -> impl IntoView {
                                                 <div class="bg-white rounded-2xl
                                                             shadow-md hover:shadow-xl
                                                             transition duration-300
-                                                            overflow-hidden flex flex-col">
+                                                            overflow-hidden flex flex-col"
 
+                                                >
+                                                <A href={format!("/blog_details/1212")}>
                                                     // 封面图
                                                     {
                                                         move || {
@@ -132,6 +136,7 @@ pub fn SectorPage(category_id: i32) -> impl IntoView {
 
                                                         </div>
                                                     </div>
+                                                    </A>
                                                 </div>
                                             }
                                         }

@@ -10,7 +10,7 @@ use crate::components::{
     about_me::admin::{
         update_about_page::UpdateAboutPage, update_quez::UpdateQuez, update_summary::UpdateSummary,
     },
-    blog::admin::{add_blog::AddBlog, blog_list::BlogList},
+    blog::{admin::{add_blog::AddBlog, blog_list::BlogList}, blog_detail_page::BlogDetailPage},
     header::{headers::Headers, sectors::Sectors},
 };
 use leptos::ev::resize;
@@ -97,8 +97,12 @@ pub fn App() -> impl IntoView {
                     // 用户访问路由
                     <ParentRoute path=path!("/") view=Headers>
                         <Route path=path!(":sector") view=Sectors/>
+                        <Route path=path!("/blog_details/:blog_id") view=BlogDetailPage/>
                         <Route path=path!("") view= move || view! {<h2>"Can not match any route."</h2>}/>
                     </ParentRoute>
+
+                    
+                    
                 </Routes>
             </main>
         </Router>

@@ -1,10 +1,10 @@
 use leptos_router::{hooks::use_params, params::Params};
 
-use crate::components::{
+use crate::{components::{
     about_me::about_me::AboutMeSector,
-    blog::sector_page::SectorPage,
+    blog::blog_list_page::BlogListPage,
     common::{ElseIf, Fallback, If, Then},
-};
+}, dto::blog_response_dto::BlogResponsetDto};
 use leptos::prelude::*;
 
 // 不同栏目切换的URL路径参数
@@ -31,14 +31,15 @@ pub fn Sectors() -> impl IntoView {
     let is_web = Signal::derive(move || sector.get()() == "Web");
     let is_product = Signal::derive(move || sector.get()() == "Product");
     let is_tool = Signal::derive(move || sector.get()() == "Tools");
+    let is_blog_detail_page = Signal::derive(move || sector.get()() == "");
     view! {
         <div>
             <If condition=is_project>
                 // The `If` component always expects a `Then` child for `then_slot`
                 <Then slot:then><ProjectsSector /></Then>
                 <ElseIf slot condition=is_about_me><AboutMeSector /></ElseIf>
-                <ElseIf slot condition=is_robotics><p><SectorPage category_id=1 /></p></ElseIf>
-                <ElseIf slot condition=is_web><SectorPage category_id=2 /></ElseIf>
+                <ElseIf slot condition=is_robotics><p><BlogListPage category_id=1 /></p></ElseIf>
+                <ElseIf slot condition=is_web><BlogListPage category_id=2 /></ElseIf>
                 <ElseIf slot condition=is_tool><p>"这是 Tools 栏目"</p></ElseIf>
                 <ElseIf slot condition=is_product><p>"这是 Product 栏目"</p></ElseIf>
                 <Fallback slot><p>"进入了fallback分支！"</p></Fallback>
