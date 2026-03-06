@@ -31,6 +31,7 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                         key=|blog_signal| blog_signal.with_untracked(|blog| blog.get_id())
                                         children=move |_, blog_signal| {
                                             // let blog = blog_signal.get();
+                                            let blog_id = move || blog_signal.get().get_id();
                                             let tags = move || blog_signal.get().get_vtags();
                                             let title = move || blog_signal.get().get_blog_title();
                                             let introduction = move || blog_signal.get().get_introduction();
@@ -54,7 +55,7 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                                             overflow-hidden flex flex-col"
 
                                                 >
-                                                <A href={format!("/blog_details/1212")}>
+                                                <A href={format!("/blog_details/{}", blog_id())}>
                                                     // 封面图
                                                     {
                                                         move || {

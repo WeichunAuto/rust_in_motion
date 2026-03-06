@@ -83,3 +83,19 @@ impl BlogResponsetDto {
         self.is_featured = target_featured;
     }
 }
+
+impl Default for BlogResponsetDto {
+    fn default() -> Self {
+        Self {
+            id: Default::default(),
+            blog_title: Default::default(),
+            introduction: Default::default(),
+            content: Default::default(),
+            vtags: Default::default(),
+            cover_image_url: Default::default(),
+            category_id: Default::default(),
+            create_at: Default::default(),
+            is_featured: Default::default(),
+        }
+    }
+}

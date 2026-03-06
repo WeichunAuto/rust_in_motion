@@ -190,8 +190,6 @@ pub async fn load_resblogs_by_category(
         let state = expect_context::<AppState>();
         let db = state.db();
 
-        
-
         let mut conditions = Condition::all();
         conditions = conditions.add(blog::Column::CategoryId.eq(category_id));
 
@@ -220,6 +218,43 @@ pub async fn load_resblogs_by_category(
             .collect::<Vec<RwSignal<BlogResponsetDto>>>();
 
         Ok(blog_resdtos)
+    }
+
+    #[cfg(not(feature = "ssr"))]
+    unreachable!("load_blogs_by_category should only run on the server");
+}
+
+#[server]
+pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use crate::entity::blog;
+        use crate::entity::prelude::Blog;
+        use sea_orm::{EntityTrait, QueryFilter, QueryOrder};
+
+        use sea_orm::{ColumnTrait, Condition};
+
+        use crate::state::app_state::AppState;
+
+        let state = expect_context::<AppState>();
+        let db = state.db();
+
+        let blog_dto_opt = Blog::find_by_id(blog_id).one(db).await?;
+        if let Some(blog_dto) = blog_dto_opt {
+            return Ok(BlogResponsetDto::new(
+                blog_dto.id,
+                blog_dto.blog_title,
+                blog_dto.introduction,
+                blog_dto.content,
+                blog_dto.tags,
+                blog_dto.cover_image_url,
+                blog_dto.category_id,
+                blog_dto.create_at.unwrap_or_default().to_string(),
+                blog_dto.is_featured.unwrap_or(false),
+            ));
+        } else {
+            return Ok(BlogResponsetDto::default());
+        }
     }
 
     #[cfg(not(feature = "ssr"))]
