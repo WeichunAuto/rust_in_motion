@@ -1,4 +1,4 @@
-use pulldown_cmark::{Options, Parser, html};
+use pulldown_cmark::{html, Options, Parser, TagEnd, CodeBlockKind, Event, Tag};
 
 /**
  * 标签类型枚举
@@ -7,12 +7,12 @@ use pulldown_cmark::{Options, Parser, html};
 pub enum TagType {
     Like,
     Dislike,
-    Tag
+    Tag,
 }
 
 /**
  * 从 markdown文件 读取内容
- */ 
+ */
 pub fn read_from_markdown(path: &str) -> anyhow::Result<String> {
     let content = std::fs::read_to_string(path)?;
     Ok(content)
@@ -21,15 +21,18 @@ pub fn read_from_markdown(path: &str) -> anyhow::Result<String> {
 /**
  * 把 markdown 转换成 html
  */
-pub fn markdown_to_html(md: &str) -> String {
+pub fn render_markdown(markdown: &str) -> String {
     let mut options = Options::empty();
     options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_FOOTNOTES);
     options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TASKLISTS);
 
-    let parser = Parser::new_ext(md, options);
-
+    let parser = Parser::new_ext(markdown, options);
     let mut html_output = String::new();
+
+    
     html::push_html(&mut html_output, parser);
 
-    html_output
+    format!("<div class=\"markdown-body\">{}</div>", html_output)
 }

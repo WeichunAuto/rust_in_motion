@@ -224,6 +224,9 @@ pub async fn load_resblogs_by_category(
     unreachable!("load_blogs_by_category should only run on the server");
 }
 
+/**
+ * 根据博客ID，加载博客详情
+ */
 #[server]
 pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnError> {
     #[cfg(feature = "ssr")]

@@ -4,7 +4,7 @@ use crate::{
     components::common::Tag,
     server_fn::{
         about_me::{get_question_by_ids, load_about_me},
-        common::{markdown_to_html, TagType},
+        common::{render_markdown, TagType},
     },
 };
 
@@ -163,9 +163,10 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
         >
             {
                 // let content = data.get_summary();
-                let html = markdown_to_html(&summary);
+                let html = render_markdown(&summary);
                 view! {
-                    <div inner_html=html></div>
+                    <div
+                    inner_html=html></div>
                 }
             }
         </div>
@@ -173,7 +174,7 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
         // Quez 区域
         <div class=
         "
-        w-full mt-2 rounded-xl p-4 sm:p-6
+        w-full rounded-xl p-4 sm:p-6
         [&_ol]:list-decimal! [&_ol]:pl-6!
         [&_ul]:list-disc! [&_ul]:pl-6!
         [&_li]:my-1
@@ -188,7 +189,7 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
                                     quez_dtos.into_iter()
                                     .map(|quez_dto| {
                                         let content = quez_dto.get_answer().unwrap_or("No writing answer yet.".to_string());
-                                        let html = markdown_to_html(&content);
+                                        let html = render_markdown(&content);
                                         view! {
                                             <div class="flex flex-col gap-2">
                                                 // 问题
@@ -217,7 +218,7 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
 #[component]
 fn AboutThePage(about_page: Option<String>) -> impl IntoView {
     let content = about_page.unwrap_or("No writing about this page yet.".to_string());
-    let html = markdown_to_html(&content);
+    let html = render_markdown(&content);
 
     view! {
         <div class=
