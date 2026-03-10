@@ -211,7 +211,9 @@ pub async fn load_resblogs_by_category(
                     blog.tags,
                     blog.cover_image_url,
                     blog.category_id,
-                    blog.create_at.unwrap_or_default().to_string(),
+                    blog.create_at
+                        .map(|dt| dt.format("%d %b, %Y").to_string())
+                        .unwrap_or_default(),
                     blog.is_featured.unwrap_or_default(),
                 ))
             })
@@ -231,11 +233,8 @@ pub async fn load_resblogs_by_category(
 pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
-        use crate::entity::blog;
         use crate::entity::prelude::Blog;
-        use sea_orm::{EntityTrait, QueryFilter, QueryOrder};
-
-        use sea_orm::{ColumnTrait, Condition};
+        use sea_orm::EntityTrait;
 
         use crate::state::app_state::AppState;
 
@@ -252,7 +251,10 @@ pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnE
                 blog_dto.tags,
                 blog_dto.cover_image_url,
                 blog_dto.category_id,
-                blog_dto.create_at.unwrap_or_default().to_string(),
+                blog_dto
+                    .create_at
+                    .map(|dt| dt.format("%d %b, %Y").to_string())
+                    .unwrap_or_default(),
                 blog_dto.is_featured.unwrap_or(false),
             ));
         } else {

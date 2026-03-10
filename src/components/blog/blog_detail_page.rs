@@ -35,6 +35,8 @@ pub fn BlogDetailPage() -> impl IntoView {
 
                             let html_content = render_markdown(&blog.get_content());
                             let cover = blog.get_cover_image_url();
+                            let mut created_at = blog.get_create_at();
+                            // created_at.truncate(11);
                             view! {
                                 <article class="w-10/12 md:w-8/12 lg:w-7/12 mx-auto py-10">
                                     <h1 class="text-3xl md:text-4xl font-bold mb-6">
@@ -42,7 +44,7 @@ pub fn BlogDetailPage() -> impl IntoView {
                                     </h1>
 
                                     <div class="text-sm text-gray-500 mb-6">
-                                        {blog.get_create_at()}
+                                        {created_at}
                                     </div>
                                     <img
                                         class="w-full rounded-xl mb-8"
