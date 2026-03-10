@@ -35,6 +35,7 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                             let tags = move || blog_signal.get().get_vtags();
                                             let title = move || blog_signal.get().get_blog_title();
                                             let introduction = move || blog_signal.get().get_introduction();
+                                            let read_time = move || blog_signal.get().get_read_time();
                                             let cover = move || {
                                                 blog_signal.get().get_cover_image_url().and_then(|url| {
                                                     if url.is_empty() { None } else { Some(url) }
@@ -111,7 +112,7 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                                         // 日期
                                                         <div class="mt-4 text-xs flex flex-row justify-between text-gray-400">
                                                             <div>
-                                                                {create_at}
+                                                                {create_at}  " | " {read_time} " min read."
                                                             </div>
                                                             <div>
                                                             // featured 标签

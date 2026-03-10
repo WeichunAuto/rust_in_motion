@@ -203,10 +203,12 @@ pub async fn load_resblogs_by_category(
         let blog_resdtos = blog_vec
             .into_iter()
             .map(|blog| {
+                let blog_content = blog.content;
                 RwSignal::new(BlogResponsetDto::new(
                     blog.id,
                     blog.blog_title,
                     blog.introduction,
+                    calculate_reading_time(&blog_content),
                     String::new(),
                     blog.tags,
                     blog.cover_image_url,
@@ -243,11 +245,13 @@ pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnE
 
         let blog_dto_opt = Blog::find_by_id(blog_id).one(db).await?;
         if let Some(blog_dto) = blog_dto_opt {
+            let blog_content = blog_dto.content;
             return Ok(BlogResponsetDto::new(
                 blog_dto.id,
                 blog_dto.blog_title,
                 blog_dto.introduction,
-                blog_dto.content,
+                calculate_reading_time(&blog_content),
+                blog_content,
                 blog_dto.tags,
                 blog_dto.cover_image_url,
                 blog_dto.category_id,
@@ -408,4 +412,25 @@ async fn save_image(base64_data: &str, to_path: &str) -> Result<String, ServerFn
     fs::write(&filepath, image_bytes)?;
 
     Ok(format!("{}{}", to_path, filename))
+}
+
+/**
+ * 计算markdown内容需要的阅读时间
+ */
+fn calculate_reading_time(markdown: &str) -> u32 {
+    // 去掉 markdown 标记
+    let text = markdown
+        .replace("#", "")
+        .replace("*", "")
+        .replace("`", "")
+        .replace(">", "")
+        .replace("-", "");
+
+    // 按空格分词
+    let word_count = text.split_whitespace().count();
+
+    // 平均 150 words / min
+    let minutes = (word_count as f64 / 150.0).ceil() as u32;
+
+    minutes.max(1)
 }

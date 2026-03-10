@@ -44,7 +44,7 @@ pub fn BlogDetailPage() -> impl IntoView {
                                     </h1>
 
                                     <div class="text-sm text-gray-500 mb-6">
-                                        {created_at}
+                                        {created_at} " | " {blog.get_read_time()} " min read."
                                     </div>
                                     <img
                                         class="w-full rounded-xl mb-8"

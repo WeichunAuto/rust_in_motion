@@ -8,6 +8,7 @@ pub struct BlogResponsetDto {
     id: i32,
     blog_title: String,
     introduction: String,
+    read_time: u32,
     content: String,
     // Vec 格式的 tags, 每个元素就是一个tag，后端加载并返回到前端时使用
     vtags: Vec<String>,
@@ -22,6 +23,7 @@ impl BlogResponsetDto {
         id: i32,
         blog_title: String,
         introduction: String,
+        read_time: u32,
         content: String,
         // Vec 格式的 tags, 每个元素就是一个tag，后端加载并返回到前端时使用
         vtags: Vec<String>,
@@ -34,6 +36,7 @@ impl BlogResponsetDto {
             id,
             blog_title,
             introduction,
+            read_time,
             content,
             vtags,
             cover_image_url,
@@ -57,6 +60,10 @@ impl BlogResponsetDto {
 
     pub fn get_content(&self) -> String {
         self.content.clone()
+    }
+
+    pub fn get_read_time(&self) -> u32 {
+        self.read_time
     }
 
     pub fn get_vtags(&self) -> Vec<String> {
@@ -91,6 +98,7 @@ impl Default for BlogResponsetDto {
             blog_title: Default::default(),
             introduction: Default::default(),
             content: Default::default(),
+            read_time: Default::default(),
             vtags: Default::default(),
             cover_image_url: Default::default(),
             category_id: Default::default(),
