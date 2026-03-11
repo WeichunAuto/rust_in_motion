@@ -11,7 +11,7 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
     // 请求博客数据
     let blog_data_resource = Resource::new(
         move || selected_category.get(),
-        |category_id| load_resblogs_by_category(category_id),
+        load_resblogs_by_category,
     );
 
     // Signal 管理 Vec<BlogDto>
@@ -136,12 +136,13 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
                                                         />
                                                     }.into_any()
                                                 } else {
-                                                    view! {
+                                                    let _: () = view! {
                                                         // <div class="w-24 h-24 bg-gray-200 flex items-center justify-center rounded">
                                                         //     "No Image"
                                                         // </div>
                                                         <></>
-                                                    }.into_any()
+                                                    };
+                                                    ().into_any()
                                                 }
                                             }
                                         }
@@ -165,10 +166,11 @@ pub fn ListByCategory(selected_category: ReadSignal<i32>) -> impl IntoView {
                                                         </span>
                                                     }.into_any()
                                                 } else {
-                                                    view! {
+                                                    let _: () = view! {
                                                         <>
                                                         </>
-                                                    }.into_any()
+                                                    };
+                                                    ().into_any()
                                                 }
                                                 }
                                             }

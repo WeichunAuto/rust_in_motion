@@ -16,7 +16,7 @@ pub fn BlogDetailPage() -> impl IntoView {
         .read()
         .as_ref()
         .ok()
-        .and_then(|p| p.blog_id.clone())
+        .and_then(|p| p.blog_id)
         .unwrap_or_default();
 
     let blog_resource = OnceResource::new(load_blog_by_id(blog_id));

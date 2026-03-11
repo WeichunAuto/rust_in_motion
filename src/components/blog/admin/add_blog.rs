@@ -1,16 +1,12 @@
-use leptos::logging::log;
 use leptos::prelude::*;
 use leptos_router::components::A;
 use web_sys::wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{FileReader, HtmlInputElement};
 
 use crate::server_fn::blog::UploadMarkdownImage;
-use crate::{
-    dto::blog_request_dto::BlogRequestDto,
-    server_fn::{
+use crate::server_fn::{
         blog::{load_blog_categories, InsertBlog},
-    },
-};
+    };
 
 #[component]
 pub fn AddBlog() -> impl IntoView {
@@ -223,8 +219,8 @@ pub fn CoverUploader(set_base64: WriteSignal<Option<String>>) -> impl IntoView {
                             let reader = FileReader::new().unwrap();
                             let reader_clone = reader.clone();
 
-                            let set_base64 = set_base64.clone();
-                            let set_preview = set_preview.clone();
+                            let set_base64 = set_base64;
+                            let set_preview = set_preview;
 
                             let onload = Closure::wrap(Box::new(move |_e: web_sys::Event| {
                                 if let Ok(result) = reader_clone.result() {
@@ -286,7 +282,7 @@ pub fn MarkdownImageUploader() -> impl IntoView {
 
                             let reader = FileReader::new().unwrap();
                             let reader_clone = reader.clone();
-                            let upload_action = upload_action.clone();
+                            let upload_action = upload_action;
 
                             let onload = Closure::wrap(Box::new(move |_e: web_sys::Event| {
                                 if let Ok(result) = reader_clone.result() {

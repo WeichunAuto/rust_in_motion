@@ -67,6 +67,7 @@ opt-level = 'z'
 lto = true
 codegen-units = 1
 panic = "abort"
+strip = true
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
@@ -134,3 +135,6 @@ lib-default-features = false
 #
 # Optional. Defaults to "release".
 lib-profile-release = "wasm-release"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz"]

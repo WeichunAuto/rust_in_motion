@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 
 use leptos_router::{
-    components::{Outlet, ParentRoute, Route, Router, Routes},
+    components::{Outlet, ParentRoute, Redirect, Route, Router, Routes},
     path,
 };
 
@@ -98,7 +98,12 @@ pub fn App() -> impl IntoView {
                     <ParentRoute path=path!("/") view=Headers>
                         <Route path=path!(":sector") view=Sectors/>
                         <Route path=path!("/blog_details/:blog_id") view=BlogDetailPage/>
-                        <Route path=path!("") view= move || view! {<h2>"Can not match any route."</h2>}/>
+
+                        // 首页默认路由
+                        <Route path=path!("") view= move || view! {
+                            
+                            <Redirect path="/Web"/>
+                        }/>
                     </ParentRoute>
 
                     

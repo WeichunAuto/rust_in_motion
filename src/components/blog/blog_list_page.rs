@@ -1,9 +1,8 @@
-use leptos::{logging::log, prelude::*};
+use leptos::prelude::*;
 use leptos_router::components::A;
 
 use crate::{
     components::common::Tag,
-    dto::blog_response_dto::BlogResponsetDto,
     server_fn::{blog::load_resblogs_by_category, common::TagType},
 };
 
@@ -130,7 +129,8 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                                                             </span>
                                                                         }.into_any()
                                                                     } else {
-                                                                        view! { <></> }.into_any()
+                                                                        let _: () = view! { <></> };
+                                                                        ().into_any()
                                                                     }
                                                                 }
                                                             }

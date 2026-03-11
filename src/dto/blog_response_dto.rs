@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
  * 博客DTO
  */
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default)]
 pub struct BlogResponsetDto {
     id: i32,
     blog_title: String,
@@ -91,19 +92,3 @@ impl BlogResponsetDto {
     }
 }
 
-impl Default for BlogResponsetDto {
-    fn default() -> Self {
-        Self {
-            id: Default::default(),
-            blog_title: Default::default(),
-            introduction: Default::default(),
-            content: Default::default(),
-            read_time: Default::default(),
-            vtags: Default::default(),
-            cover_image_url: Default::default(),
-            category_id: Default::default(),
-            create_at: Default::default(),
-            is_featured: Default::default(),
-        }
-    }
-}

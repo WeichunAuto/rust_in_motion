@@ -1,5 +1,5 @@
 use leptos::{
-    prelude::{expect_context, ServerFnError},
+    prelude::ServerFnError,
     server,
 };
 
@@ -23,6 +23,8 @@ use crate::state::app_state::AppState;
 pub async fn get_menus() -> Result<Vec<MenuDto>, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
+        use leptos::prelude::expect_context;
+
         let state = expect_context::<AppState>();
         let db = state.db();
 

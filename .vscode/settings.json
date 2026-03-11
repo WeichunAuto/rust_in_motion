@@ -17,6 +17,6 @@
     "strings": true
   },
   "css.validate": false,
-  "makefile.configureOnOpen": false
+  "makefile.configureOnOpen": false,
 }
   

@@ -1,4 +1,4 @@
-use leptos::{either::Either, logging::log, prelude::*};
+use leptos::{either::Either, prelude::*};
 use leptos_router::hooks::use_query_map;
 
 use crate::{constant::QUEZ_ANSWER_DIR, server_fn::about_me::update_answer_by_quezid};
