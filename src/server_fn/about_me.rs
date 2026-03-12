@@ -1,4 +1,4 @@
-use leptos::{lazy, prelude::ServerFnError, server};
+use leptos::{prelude::ServerFnError, server};
 
 #[cfg(feature = "ssr")]
 use sea_orm::prelude::*;
@@ -11,7 +11,6 @@ use crate::state::app_state::AppState;
  * 更新指定 quez 中的答案
  */
 #[server]
-#[lazy]
 pub async fn update_answer_by_quezid(id: i32) -> Result<bool, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
@@ -62,7 +61,6 @@ pub async fn update_answer_by_quezid(id: i32) -> Result<bool, ServerFnError> {
 
 // 更新 Summary
 #[server]
-#[lazy]
 pub async fn update_summary() -> Result<bool, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
@@ -108,7 +106,6 @@ pub async fn update_summary() -> Result<bool, ServerFnError> {
 }
 
 #[server]
-#[lazy]
 pub async fn update_about_page() -> Result<bool, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
@@ -157,7 +154,6 @@ pub async fn update_about_page() -> Result<bool, ServerFnError> {
  * 查询出 about me 的 name, summary, 和 问题id
  */
 #[server]
-#[lazy]
 pub async fn load_about_me() -> Result<AboutMeDto, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
@@ -195,7 +191,6 @@ pub async fn load_about_me() -> Result<AboutMeDto, ServerFnError> {
  * 根据 IDs 查询出 question
  */
 #[server]
-#[lazy]
 pub async fn get_question_by_ids(ids: Vec<i32>) -> Result<Vec<QuestionDto>, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
