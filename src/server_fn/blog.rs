@@ -1,14 +1,9 @@
-use std::{
-    fs,
-    time::{SystemTime, UNIX_EPOCH},
-};
-
 use leptos::prelude::*;
 
 use crate::dto::{
-        blog_category_dto::BlogCategoryDto, blog_request_dto::BlogRequestDto,
-        blog_response_dto::BlogResponsetDto,
-    };
+    blog_category_dto::BlogCategoryDto, blog_request_dto::BlogRequestDto,
+    blog_response_dto::BlogResponsetDto,
+};
 
 /**
  * 发布博客
@@ -17,7 +12,9 @@ use crate::dto::{
 pub async fn insert_blog(blog_dto: BlogRequestDto) -> Result<bool, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
-        use crate::{constant::BLOG_COVER_DIR, entity::blog::ActiveModel, state::app_state::AppState};
+        use crate::{
+            constant::BLOG_COVER_DIR, entity::blog::ActiveModel, state::app_state::AppState,
+        };
         use sea_orm::{ActiveModelTrait, ActiveValue::Set};
 
         let state = expect_context::<AppState>();
@@ -353,9 +350,14 @@ pub async fn delete_blog_by_id(blog_id: i32) -> Result<i32, ServerFnError> {
 /**
  * 将图片base64保存到文件，并返回保存的文件路径
  */
+#[cfg(feature = "ssr")] // 加上这一行
 async fn save_image(base64_data: &str, to_path: &str) -> Result<String, ServerFnError> {
     use base64::engine::general_purpose::STANDARD;
     use base64::Engine;
+    use std::{
+        fs,
+        time::{SystemTime, UNIX_EPOCH},
+    };
 
     // 分离 header 和 body 数据
     let mut parts = base64_data.split(',');
@@ -416,6 +418,7 @@ async fn save_image(base64_data: &str, to_path: &str) -> Result<String, ServerFn
 /**
  * 计算markdown内容需要的阅读时间
  */
+#[cfg(feature = "ssr")] // 加上这一行
 fn calculate_reading_time(markdown: &str) -> u32 {
     // 去掉 markdown 标记
     let text = markdown
