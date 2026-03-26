@@ -1,0 +1,83 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: Ubuntu 24.04.4 LTS
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 安装 Rust
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: cargo
+
+      # 安装依赖
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            pkg-config \
+            libssl-dev \
+            build-essential \
+            curl \
+            nodejs \
+            npm
+
+      # 安装 cargo-leptos 和 sqlx-cli
+      - name: Install cargo-leptos
+        run: |
+          cargo install cargo-leptos --locked
+          cargo install sqlx-cli --locked
+          cargo --version
+          sqlx --version
+
+      # 构建前端依赖
+      - name: Install frontend deps
+        run: |
+          npm install
+          npm install tw-animate-css
+
+      # 构建 leptos
+      - name: Build leptos
+        run: cargo leptos build --release
+
+      # 上传到服务器
+      - name: Upload files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          source: |
+            target/release/rust_in_motion
+            target/site
+            migrations
+            config
+          target: /home/ubuntu/app
+
+      # 重启服务
+      # - name: Restart app
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.SERVER_HOST }}
+      #     username: ${{ secrets.SERVER_USER }}
+      #     key: ${{ secrets.SERVER_SSH_KEY }}
+      #     script: |
+      #       pkill your_binary || true
+      #       cd /home/ubuntu/app
+      #       chmod +x your_binary
+      #       ./your_binary &

@@ -21,6 +21,9 @@ RUN rustup target add wasm32-unknown-unknown
 # 安装 cargo-leptos
 RUN cargo install cargo-leptos --locked
 
+# 安装 sqlx-cli（只支持 postgres）
+RUN cargo install sqlx-cli --no-default-features --features postgres
+
 # copy project
 COPY . .
 
@@ -42,6 +45,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+COPY --from=builder /usr/local/cargo/bin/sqlx /usr/local/bin/sqlx
+
 # copy binary
 COPY --from=builder /app/target/release/rust_in_motion /app/rust_in_motion
 
@@ -56,4 +61,5 @@ COPY config /app/config
 
 EXPOSE 3000
 
-CMD ["./rust_in_motion"]
+# ✅ 启动时自动执行 migration
+CMD ["sh", "-c", "sqlx migrate run && ./rust_in_motion"]
