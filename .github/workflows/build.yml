@@ -35,7 +35,16 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: cargo
+          components: cargo, rustfmt, clippy
+          target: x86_64-unknown-linux-gnu
+
+      # 添加 WASM 目标（Leptos 必需）
+      - name: Add WASM target
+        run: |
+          rustup target add wasm32-unknown-unknown
+          rustup target list | grep installed
+          # 验证安装
+          rustc --print target-list | grep wasm32
 
       # 安装依赖
       - name: Install system deps
@@ -51,11 +60,12 @@ jobs:
             ca-certificates \
             gcc \
             g++ \
-            make
+            make \
+            binaryen  # 添加 binaryen 用于 WASM 优化
             
           # 验证编译器架构
           gcc -dumpmachine
-      
+
       # 安装 cargo-leptos 和 sqlx-cli
       - name: Install cargo-leptos and sqlx-cli
         run: |
@@ -69,7 +79,7 @@ jobs:
           fi
           cargo --version
           sqlx --version
-          
+
           # 验证安装的二进制文件架构
           file ~/.cargo/bin/cargo-leptos | grep x86-64
           file ~/.cargo/bin/sqlx | grep x86-64
@@ -88,7 +98,7 @@ jobs:
         run: |
           npm ci
           npm install tw-animate-css
-          
+
           # 验证 Node.js 架构
           node -p "process.arch"
           # 应该输出 x64
@@ -98,6 +108,12 @@ jobs:
         run: |
           rustup target add x86_64-unknown-linux-gnu
           rustup show
+
+          # 显示 Rust 目标
+          rustup show
+          rustc --version
+          cargo --version
+          cargo leptos --version
 
       # 构建 leptos
       - name: Build leptos
