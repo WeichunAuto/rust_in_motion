@@ -139,7 +139,6 @@ jobs:
             target/site
             migrations
             config
-            style
           target: /home/ubuntu/app
 
       # 重启服务

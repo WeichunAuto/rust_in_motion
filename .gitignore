@@ -4,7 +4,6 @@ debug/
 target/
 node_modules/
 public/images/
-style/
 article/about_me/
 data/uploads/*
 
