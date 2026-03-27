@@ -1,3 +1,5 @@
+#![recursion_limit = "512"]
+
 pub mod app;
 
 #[cfg(feature = "ssr")] // 整个 backend 模块只在server使用
