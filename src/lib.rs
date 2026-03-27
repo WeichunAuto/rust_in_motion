@@ -1,3 +1,4 @@
+// 解决 action workflow 中编译阶段的递归深度限制的问题
 #![recursion_limit = "512"]
 
 pub mod app;
@@ -12,9 +13,9 @@ pub mod config;
 pub mod state;
 
 pub mod components;
+pub mod constant;
 pub mod dto;
 pub mod server_fn;
-pub mod constant;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

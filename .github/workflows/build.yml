@@ -126,6 +126,65 @@ jobs:
       - name: Build leptos
         run: cargo leptos build --release
 
+      # 添加调试步骤：查看构建产物
+      - name: Debug build artifacts
+        run: |
+          echo "========================================"
+          echo "Checking build artifacts in CI"
+          echo "========================================"
+
+          # 查看当前目录
+          echo "Current directory: $(pwd)"
+          echo ""
+
+          # 查看 target/release 目录
+          echo "Contents of target/release:"
+          if [ -d "target/release" ]; then
+            ls -la target/release/
+            echo ""
+            echo "Looking for rust_in_motion binary:"
+            find target/release -name "rust_in_motion" -type f 2>/dev/null || echo "Not found"
+          else
+            echo "target/release directory does not exist!"
+          fi
+          echo ""
+
+          # 查看 target/site 目录
+          echo "Contents of target/site:"
+          if [ -d "target/site" ]; then
+            ls -la target/site/
+          else
+            echo "target/site directory does not exist!"
+          fi
+          echo ""
+
+          # 查看 migrations 目录
+          echo "Contents of migrations:"
+          if [ -d "migrations" ]; then
+            ls -la migrations/
+          else
+            echo "migrations directory does not exist!"
+          fi
+          echo ""
+
+          # 查看 config 目录
+          echo "Contents of config:"
+          if [ -d "config" ]; then
+            ls -la config/
+          else
+            echo "config directory does not exist!"
+          fi
+          echo ""
+
+          # 查找所有可能的构建产物
+          echo "Searching for rust_in_motion binary in target:"
+          find target -name "rust_in_motion" -type f 2>/dev/null || echo "Not found"
+          echo ""
+
+          echo "Searching for site directory:"
+          find target -name "site" -type d 2>/dev/null || echo "Not found"
+          echo "========================================"
+
       # 上传到服务器
       - name: Upload files to server
         uses: appleboy/scp-action@v0.1.7
@@ -140,16 +199,3 @@ jobs:
             migrations
             config
           target: /home/ubuntu/app
-
-      # 重启服务
-      # - name: Restart app
-      #   uses: appleboy/ssh-action@v1.0.0
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USER }}
-      #     key: ${{ secrets.SERVER_SSH_KEY }}
-      #     script: |
-      #       pkill your_binary || true
-      #       cd /home/ubuntu/app
-      #       chmod +x your_binary
-      #       ./your_binary &
