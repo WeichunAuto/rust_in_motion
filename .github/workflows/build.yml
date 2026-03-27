@@ -4,19 +4,32 @@ on:
   push:
     branches: ["main"]
     tags: ["v*"]
+  workflow_dispatch: # 添加手动触发
 
 permissions:
   contents: write
 
+# 添加并发控制，避免多个任务同时运行
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
-    runs-on: Ubuntu 24.04.4 LTS
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      # 验证系统架构
+      - name: Verify system architecture
+        run: |
+          echo "System architecture:"
+          uname -m
+          arch
 
       # 安装 Rust
       - name: Install Rust
@@ -34,21 +47,57 @@ jobs:
             build-essential \
             curl \
             nodejs \
-            npm
-
+            npm \
+            ca-certificates \
+            gcc \
+            g++ \
+            make
+            
+          # 验证编译器架构
+          gcc -dumpmachine
+      
       # 安装 cargo-leptos 和 sqlx-cli
-      - name: Install cargo-leptos
+      - name: Install cargo-leptos and sqlx-cli
         run: |
-          cargo install cargo-leptos --locked
-          cargo install sqlx-cli --locked
+          # 检查并安装 cargo-leptos
+          if ! command -v cargo-leptos &> /dev/null; then
+            cargo install cargo-leptos --locked --target x86_64-unknown-linux-gnu
+          fi
+          # 检查并安装 sqlx-cli
+          if ! command -v sqlx &> /dev/null; then
+            cargo install sqlx-cli --locked --target x86_64-unknown-linux-gnu
+          fi
           cargo --version
           sqlx --version
+          
+          # 验证安装的二进制文件架构
+          file ~/.cargo/bin/cargo-leptos | grep x86-64
+          file ~/.cargo/bin/sqlx | grep x86-64
 
-      # 构建前端依赖
-      - name: Install frontend deps
+      # 缓存 Node.js 依赖
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-x86_64-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-x86_64-node-
+
+      # 安装前端依赖
+      - name: Install frontend dependencies
         run: |
-          npm install
+          npm ci
           npm install tw-animate-css
+          
+          # 验证 Node.js 架构
+          node -p "process.arch"
+          # 应该输出 x64
+
+      # 设置 Rust 目标架构（确保编译为 x86_64）
+      - name: Configure Rust target
+        run: |
+          rustup target add x86_64-unknown-linux-gnu
+          rustup show
 
       # 构建 leptos
       - name: Build leptos
