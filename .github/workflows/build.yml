@@ -60,8 +60,15 @@ jobs:
             ca-certificates \
             gcc \
             g++ \
-            make \
-            binaryen  # 添加 binaryen 用于 WASM 优化
+            make  
+
+            # 手动安装最新版本的 binaryen
+          cd /tmp
+          wget https://github.com/WebAssembly/binaryen/releases/download/version_120/binaryen-version_120-x86_64-linux.tar.gz
+          tar -xzf binaryen-version_120-x86_64-linux.tar.gz
+          sudo cp binaryen-version_120/bin/* /usr/local/bin/
+          wasm-opt --version
+            
             
           # 验证编译器架构
           gcc -dumpmachine
