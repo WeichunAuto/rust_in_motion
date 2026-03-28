@@ -122,6 +122,15 @@ jobs:
           cargo --version
           cargo leptos --version
 
+      # 在构建步骤之前添加设置环境变量的步骤
+      # 设置生产环境变量
+      - name: Set production environment
+        run: |
+          echo "RUN_ENV=prod" >> $GITHUB_ENV
+          echo "RUST_LOG=info" >> $GITHUB_ENV
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "Building for production environment"
+
       # 构建 leptos
       - name: Build leptos
         run: cargo leptos build --release

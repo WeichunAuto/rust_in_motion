@@ -44,10 +44,33 @@ impl AppConfig {
 
         tracing::info!("run env: {}", run_env);
 
+        // 列出当前目录和 config 目录
+        println!("📁 Current directory: {:?}", std::env::current_dir());
+        println!(
+            "📁 Config directory exists: {}",
+            std::path::Path::new("config").exists()
+        );
+
+        // Build configuration from multiple sources
+        let config_path = format!("config/{}.yaml", run_env);
+        println!("📄 Loading config from: {}", config_path);
+        println!(
+            "📄 Config file exists: {}",
+            std::path::Path::new(&config_path).exists()
+        );
+
+        // 如果文件存在，打印内容（调试用）
+        if std::path::Path::new(&config_path).exists() {
+            println!("📄 Config file content:");
+            if let Ok(content) = std::fs::read_to_string(&config_path) {
+                println!("{}", content);
+            }
+        }
+
         // Build configuration from multiple sources
         Config::builder()
             .add_source(
-                config::File::with_name(format!("config/{}.yaml", run_env).as_str())
+                config::File::with_name(&config_path)
                     .format(FileFormat::Yaml)
                     .required(false),
             )
