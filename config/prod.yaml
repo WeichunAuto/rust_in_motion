@@ -3,7 +3,7 @@ server:
   port: 3005
 
 database:
-  host: "postgres"
+  host: "127.0.0.1"
   port: 5432
   user: "wangweichun"
   password: "WW_33_cc"

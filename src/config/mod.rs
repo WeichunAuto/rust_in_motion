@@ -42,6 +42,8 @@ impl AppConfig {
         // Determine the runtime environment, defaulting to "dev"
         let run_env = std::env::var("RUN_ENV").unwrap_or_else(|_| "dev".into());
 
+        tracing::info!("run env: {}", run_env);
+
         // Build configuration from multiple sources
         Config::builder()
             .add_source(
