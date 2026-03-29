@@ -194,7 +194,20 @@ jobs:
           find target -name "site" -type d 2>/dev/null || echo "Not found"
           echo "========================================"
 
-      # 上传到服务器
+      # 1. 先停止运行中的服务
+      - name: Stop rust_in_motion service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          script: |
+            set -e
+            echo "Stopping service..."
+            sudo systemctl stop rust_in_motion || true
+
+      # 2. 上传到服务器
       - name: Upload files to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -209,7 +222,7 @@ jobs:
           timeout: 30s
           command_timeout: 10m
 
-      # 重启服务器中的rust_in_motion服务
+      # 3. 启动服务器中的rust_in_motion服务
       - name: Restart rust_in_motion service
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -228,7 +241,7 @@ jobs:
             sudo systemctl daemon-reload
 
             # 重启服务
-            sudo systemctl restart rust_in_motion
+            sudo systemctl start rust_in_motion
 
             # 查看状态（调试用）
             sudo systemctl status rust_in_motion --no-pager
