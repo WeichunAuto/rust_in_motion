@@ -208,3 +208,29 @@ jobs:
           overwrite: true
           timeout: 30s
           command_timeout: 10m
+
+      # 重启服务器中的rust_in_motion服务
+      - name: Restart rust_in_motion service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          script: |
+            # 安全开关，只要有一条命令失败，脚本立即退出
+            set -e
+
+            echo "Restarting rust_in_motion service..."
+
+            # 重新加载 systemd（防止 service 文件有变化）
+            sudo systemctl daemon-reexec
+            sudo systemctl daemon-reload
+
+            # 重启服务
+            sudo systemctl restart rust_in_motion
+
+            # 查看状态（调试用）
+            sudo systemctl status rust_in_motion --no-pager
+
+            echo "Service restarted successfully!"
