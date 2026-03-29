@@ -52,7 +52,11 @@ pub fn BlogDetailPage() -> impl IntoView {
                                     />
 
                                     <div
-                                        class="prose prose-neutral max-w-none"
+                                        class="prose prose-neutral max-w-none
+                                            [&_ol]:list-decimal! [&_ol]:pl-6!
+                                            [&_ul]:list-disc! [&_ul]:pl-6!
+                                            [&_li]:my-1
+                                        "
                                         inner_html=html_content
                                     >
                                     </div>
