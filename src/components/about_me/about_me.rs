@@ -16,7 +16,11 @@ pub fn AboutMeSector() -> impl IntoView {
     view! {
         <div class="w-full px-4 sm:px-6 lg:w-8/12 lg:px-0 mx-auto flex flex-col justify-start">
             // Profile, Summary, and Quez 视图
-            <Suspense fallback=move|| view! {<p>"loading..."</p>}>
+            <Suspense fallback=move|| view! {
+                <div class="w-full text-2xl flex items-center justify-center py-20 text-gray-400">
+                    <p class="animate-pulse">"Loading..."</p>
+                </div>
+            }>
             {
                 move || match about_me_resource.get(){
                     Some(Ok(data)) => view!{
