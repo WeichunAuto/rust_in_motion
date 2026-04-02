@@ -28,7 +28,8 @@ pub async fn get_menus() -> Result<Vec<MenuDto>, ServerFnError> {
         let state = expect_context::<AppState>();
         let db = state.db();
 
-        let conditions = Condition::all();
+        let mut conditions = Condition::all();
+        conditions = conditions.add(tab_menu::Column::DisplayOrder.gt(0));
 
         let menus = TabMenu::find()
             .filter(conditions)
