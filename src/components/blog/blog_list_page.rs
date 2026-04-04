@@ -12,7 +12,9 @@ use crate::{
 #[component]
 pub fn BlogListPage(category_id: i32) -> impl IntoView {
     // 请求博客数据
-    let blog_data_resource = OnceResource::new(load_resblogs_by_category(category_id));
+    let blog_data_resource = Resource::new(
+        move || category_id,
+        move |_| load_resblogs_by_category(category_id));
 
     view! {
         <Suspense fallback=move || view! {
