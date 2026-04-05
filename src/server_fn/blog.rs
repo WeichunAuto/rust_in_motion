@@ -183,6 +183,8 @@ pub async fn load_resblogs_by_category(
 
         use crate::state::app_state::AppState;
 
+        // tracing::info!("reloaded....");
+
         let state = expect_context::<AppState>();
         let db = state.db();
 

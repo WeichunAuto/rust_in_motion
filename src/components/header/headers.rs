@@ -1,3 +1,4 @@
+use leptos::ev::scroll;
 use leptos::prelude::*;
 
 use crate::components::common::{Fallback, If, Then};

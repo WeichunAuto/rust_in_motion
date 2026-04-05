@@ -11,7 +11,7 @@ use crate::components::{
         update_about_page::UpdateAboutPage, update_quez::UpdateQuez, update_summary::UpdateSummary,
     },
     blog::{admin::{add_blog::AddBlog, blog_list::BlogList}, blog_detail_page::BlogDetailPage},
-    header::{headers::Headers, sectors::Sectors},
+    header::{headers::Headers, main_layout::MainLayout, sectors::Sectors},
 };
 use leptos::ev::resize;
 use web_sys::window;
@@ -95,7 +95,8 @@ pub fn App() -> impl IntoView {
 
 
                     // 用户访问路由
-                    <ParentRoute path=path!("/") view=Headers>
+                    // <ParentRoute path=path!("/") view=Headers>
+                    <ParentRoute path=path!("/") view=MainLayout>
                         <Route path=path!(":sector") view=Sectors/>
                         <Route path=path!("/blog_details/:blog_id") view=BlogDetailPage/>
 

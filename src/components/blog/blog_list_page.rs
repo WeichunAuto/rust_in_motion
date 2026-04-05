@@ -12,9 +12,7 @@ use crate::{
 #[component]
 pub fn BlogListPage(category_id: i32) -> impl IntoView {
     // 请求博客数据
-    let blog_data_resource = Resource::new(
-        move || category_id,
-        move |_| load_resblogs_by_category(category_id));
+    let blog_data_resource = OnceResource::new(load_resblogs_by_category(category_id),);
 
     view! {
         <Suspense fallback=move || view! {
@@ -26,13 +24,13 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                     (0..6).map(|_| {
                         view! {
                             <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
-                                
+
                                 // 图片骨架
                                 <div class="w-full h-48 bg-gray-200"></div>
 
                                 // 内容骨架
                                 <div class="px-6 pb-6 pt-3 flex flex-col flex-1">
-                                    
+
                                     // tags
                                     <div class="flex gap-2 mb-3">
                                         <div class="h-5 w-12 bg-gray-200 rounded-full"></div>
