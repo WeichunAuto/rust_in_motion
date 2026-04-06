@@ -10,7 +10,10 @@ use crate::components::{
     about_me::admin::{
         update_about_page::UpdateAboutPage, update_quez::UpdateQuez, update_summary::UpdateSummary,
     },
-    blog::{admin::{add_blog::AddBlog, blog_list::BlogList}, blog_detail_page::BlogDetailPage},
+    blog::{
+        admin::{add_blog::AddBlog, blog_list::BlogList},
+        blog_detail_page::BlogDetailPage,
+    },
     header::{headers::Headers, main_layout::MainLayout, sectors::Sectors},
 };
 use leptos::ev::resize;
@@ -40,18 +43,18 @@ pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
-    // 监听是否是移动屏幕
-    let (is_mobile, set_is_mobile) = signal(false);
+    // 监听是否是移动屏幕, 默认 None, 页面显示加载中
+    let (is_mobile, set_is_mobile) = signal(None);
     Effect::new(move || {
         let Some(win) = window() else { return };
         // 创建 matchMedia
         let mql: MediaQueryList = win.match_media("(max-width: 640px)").unwrap().unwrap();
         // 先设置一次初始值
-        set_is_mobile.set(mql.matches());
+        set_is_mobile.set(Some(mql.matches()));
 
         // 只要 resize 就重新判断 matches()
         window_event_listener(resize, move |_| {
-            set_is_mobile.set(mql.matches());
+            set_is_mobile.set(Some(mql.matches()));
         });
     });
 
@@ -102,13 +105,13 @@ pub fn App() -> impl IntoView {
 
                         // 首页默认路由
                         <Route path=path!("") view= move || view! {
-                            
+
                             <Redirect path="/Web"/>
                         }/>
                     </ParentRoute>
 
-                    
-                    
+
+
                 </Routes>
             </main>
         </Router>
