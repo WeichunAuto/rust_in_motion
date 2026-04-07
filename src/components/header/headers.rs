@@ -1,7 +1,4 @@
-use leptos::ev::scroll;
 use leptos::prelude::*;
-
-use crate::components::common::{Fallback, If, Then};
 
 use crate::components::header::mobile_header::MobileHeader;
 use crate::components::header::pc_header::PcHeader;
@@ -47,8 +44,8 @@ pub fn Headers() -> impl IntoView {
                 view! {
                     <Show
                         when= move || is_mobile_ready.is_some()
-                        fallback=move || view! { 
-                            <div class="flex items-center justify-center h-[60vh] w-full text-gray-500">
+                        fallback=move || view! {
+                            <div class="flex items-center justify-center h-10 w-full text-gray-500">
                                 "loading data...."
                             </div>
                         }

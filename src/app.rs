@@ -14,7 +14,7 @@ use crate::components::{
         admin::{add_blog::AddBlog, blog_list::BlogList},
         blog_detail_page::BlogDetailPage,
     },
-    header::{headers::Headers, main_layout::MainLayout, sectors::Sectors},
+    header::{main_layout::MainLayout, sectors::Sectors},
 };
 use leptos::ev::resize;
 use web_sys::window;
@@ -30,6 +30,9 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <AutoReload options=options.clone() />
                 <HydrationScripts options/>
                 <MetaTags/>
+
+                // <link rel="icon" type="image/png" href="/favicon.png" />
+                <link rel="Bobby Blog" href="/images/favicon.png" />
             </head>
             <body>
                 <App/>
@@ -67,7 +70,7 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/rust_in_motion.css"/>
 
         // sets the document title
-        <Title text="Welcome to Leptos"/>
+        <Title text="Bobby Blog"/>
 
         // content for this welcome page
         <Router>
