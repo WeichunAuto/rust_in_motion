@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 /**
  * 博客DTO
  */
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[derive(Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub struct BlogResponsetDto {
     id: i32,
     blog_title: String,
@@ -91,4 +90,3 @@ impl BlogResponsetDto {
         self.is_featured = target_featured;
     }
 }
-

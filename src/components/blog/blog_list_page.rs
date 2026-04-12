@@ -12,7 +12,7 @@ use crate::{
 #[component]
 pub fn BlogListPage(category_id: i32) -> impl IntoView {
     // 请求博客数据
-    let blog_data_resource = OnceResource::new(load_resblogs_by_category(category_id),);
+    let blog_data_resource = OnceResource::new(load_resblogs_by_category(category_id));
 
     view! {
         <Suspense fallback=move || view! {
@@ -70,26 +70,25 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                                 gap-8">
                                         <ForEnumerate
                                             each=move || blogs_data.clone()
-                                            key=|blog_signal| blog_signal.with_untracked(|blog| blog.get_id())
-                                            children=move |_, blog_signal| {
+                                            key=|blog| blog.get_id()
+                                            children=move |_, blog| {
                                                 // let blog = blog_signal.get();
-                                                let blog_id = move || blog_signal.get().get_id();
-                                                let tags = move || blog_signal.get().get_vtags();
-                                                let title = move || blog_signal.get().get_blog_title();
-                                                let introduction = move || blog_signal.get().get_introduction();
-                                                let read_time = move || blog_signal.get().get_read_time();
-                                                let cover = move || {
-                                                    blog_signal.get().get_cover_image_url().and_then(|url| {
+                                                let blog_id = blog.get_id();
+                                                let tags = blog.get_vtags();
+                                                let title = blog.get_blog_title();
+                                                let introduction = blog.get_introduction();
+                                                let read_time = blog.get_read_time();
+                                                let cover =
+                                                    blog.get_cover_image_url().and_then(|url| {
                                                         if url.is_empty() { None } else { Some(url) }
-                                                    })
-                                                };
-                                                let create_at = move || {
-                                                    let mut create_at = blog_signal.get().get_create_at();
+                                                    });
+                                                let create_at =  {
+                                                    let mut create_at = blog.get_create_at();
                                                     create_at.truncate(16);
                                                     create_at
 
                                                 };
-                                                let is_featured = move || blog_signal.get().get_is_featured();
+                                                let is_featured = blog.get_is_featured();
                                                 view! {
                                                     // ===== 单个博客卡片 =====
                                                     <div class="bg-white rounded-2xl
@@ -98,11 +97,11 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                                                 overflow-hidden flex flex-col"
 
                                                     >
-                                                    <A href={format!("/blog_details/{}", blog_id())}>
+                                                    <A href={format!("/blog_details/{}", blog_id)}>
                                                         // 封面图
                                                         {
-                                                            move || {
-                                                                match cover() {
+
+                                                                match cover {
                                                                     Some(url) =>
                                                                         view! {
                                                                             <img
@@ -117,15 +116,15 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                                                         />
                                                                     }.into_any()
                                                                 }
-                                                            }
+
                                                         }
 
                                                         // 内容区域
                                                         <div class="px-6 pb-6 pt-3 flex flex-col flex-1">
                                                             <div class="flex flex-row gap-2 mb-2">
                                                             {
-                                                                move || {
-                                                                    tags().into_iter()
+
+                                                                    tags.into_iter()
                                                                     .map(|tag| {
                                                                         // log!("tag: {:?}", tag);
                                                                         view! {
@@ -133,7 +132,7 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                                                         }
                                                                     })
                                                                     .collect_view()
-                                                                }
+
                                                             }
                                                             </div>
 
@@ -160,7 +159,7 @@ pub fn BlogListPage(category_id: i32) -> impl IntoView {
                                                                 // featured 标签
                                                                 {
                                                                     move || {
-                                                                        if is_featured() {
+                                                                        if is_featured {
                                                                             view! {
                                                                                 <span class="text-xs
                                                                                     bg-yellow-100

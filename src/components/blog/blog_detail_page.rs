@@ -1,7 +1,11 @@
 use leptos::prelude::*;
 use leptos_router::{hooks::use_params, params::Params};
 
-use crate::server_fn::{blog::load_blog_by_id, common::render_markdown};
+use crate::{
+    components::icons::icons::LinkedIcon,
+    server_fn::{blog::load_blog_by_id, common::render_markdown},
+};
+use urlencoding::encode;
 
 // 博客详情页-博客ID参数
 #[derive(Params, PartialEq)]
@@ -13,13 +17,31 @@ struct BlogIdParams {
 pub fn BlogDetailPage() -> impl IntoView {
     let params = use_params::<BlogIdParams>();
     let blog_id = params
-        .read()
+        .read_untracked()
         .as_ref()
         .ok()
         .and_then(|p| p.blog_id)
         .unwrap_or_default();
 
-    let blog_resource = OnceResource::new(load_blog_by_id(blog_id));
+    let linkedin_share_url = move || {
+        // SSR 阶段：不能调用 web_sys
+        #[cfg(target_arch = "wasm32")]
+        {
+            // WASM 阶段：正常获取当前 URL 并编码
+            let page_url = web_sys::window()
+                .and_then(|w| w.location().href().ok())
+                .unwrap_or_default();
+            format!(
+                "https://www.linkedin.com/sharing/share-offsite/?url={}",
+                &encode(&page_url).to_string()
+            )
+        }
+    };
+
+    let blog_resource = Resource::new(
+        move || blog_id,
+        |blog_id| async move { load_blog_by_id(blog_id).await },
+    );
 
     view! {
         <div class="w-full">
@@ -59,6 +81,29 @@ pub fn BlogDetailPage() -> impl IntoView {
                                         "
                                         inner_html=html_content
                                     >
+                                    </div>
+
+                                    <div class="mt-20 border-gray-200 flex flex-row justify-between items-center">
+                                        <div class="text-lg text-gray-500">"Share this article:"</div>
+                                        <div class="flex flex-row gap-3 justify-end items-center">
+                                            <div>
+                                                <a
+                                                    href=move || linkedin_share_url()
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+                                                        bg-blue-500 text-white text-xs font-medium
+                                                        hover:bg-[#004182] transition-colors duration-200
+                                                        "
+
+                                                >
+                                                    <LinkedIcon />
+                                                     "LinkedIn"
+                                                </a>
+                                            </div>
+
+                                        </div>
+
                                     </div>
 
                                 </article>

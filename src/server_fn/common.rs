@@ -31,7 +31,6 @@ pub fn render_markdown(markdown: &str) -> String {
     let parser = Parser::new_ext(markdown, options);
     let mut html_output = String::new();
 
-    
     html::push_html(&mut html_output, parser);
 
     format!("<div class=\"markdown-body\">{}</div>", html_output)

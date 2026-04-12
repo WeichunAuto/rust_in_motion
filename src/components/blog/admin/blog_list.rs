@@ -1,6 +1,9 @@
 use leptos::prelude::*;
 
-use crate::{components::blog::admin::list_by_category::ListByCategory, server_fn::blog::load_blog_categories};
+use crate::{
+    components::blog::admin::list_by_category::ListByCategory,
+    server_fn::blog::load_blog_categories,
+};
 
 #[component]
 pub fn BlogList() -> impl IntoView {
@@ -65,7 +68,6 @@ pub fn BlogList() -> impl IntoView {
                     <ListByCategory selected_category=selected_category/>
                 </div>
             </div>
-
 
         </div>
     }

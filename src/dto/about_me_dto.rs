@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-
 /**
  * about me dto
  */
@@ -17,10 +16,20 @@ pub struct AboutMeDto {
 }
 
 impl AboutMeDto {
-    pub fn new(name: String, summary: String, quez_id: Vec<i32>, about_page: Option<String>) -> Self {
-        Self {name, summary, quez_id, about_page}
+    pub fn new(
+        name: String,
+        summary: String,
+        quez_id: Vec<i32>,
+        about_page: Option<String>,
+    ) -> Self {
+        Self {
+            name,
+            summary,
+            quez_id,
+            about_page,
+        }
     }
-    
+
     pub fn get_name(&self) -> String {
         self.name.clone()
     }

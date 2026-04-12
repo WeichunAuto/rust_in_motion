@@ -1,7 +1,4 @@
-use leptos::{
-    prelude::ServerFnError,
-    server,
-};
+use leptos::{prelude::ServerFnError, server};
 
 use crate::dto::menu_dto::MenuDto;
 #[cfg(feature = "ssr")]

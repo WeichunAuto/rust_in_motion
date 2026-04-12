@@ -4,9 +4,7 @@ use web_sys::wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{FileReader, HtmlInputElement};
 
 use crate::server_fn::blog::UploadMarkdownImage;
-use crate::server_fn::{
-        blog::{load_blog_categories, InsertBlog},
-    };
+use crate::server_fn::blog::{load_blog_categories, InsertBlog};
 
 #[component]
 pub fn AddBlog() -> impl IntoView {

@@ -115,64 +115,9 @@ pub async fn load_blog_categories() -> Result<Vec<BlogCategoryDto>, ServerFnErro
  * 根据类型ID, 加载博客
  */
 #[server]
-pub async fn load_blogs_by_category(
-    category_id: i32,
-) -> Result<Vec<RwSignal<BlogRequestDto>>, ServerFnError> {
-    #[cfg(feature = "ssr")]
-    {
-        use crate::entity::blog;
-        use crate::entity::prelude::Blog;
-        use sea_orm::{EntityTrait, QueryFilter, QueryOrder};
-
-        use sea_orm::{ColumnTrait, Condition};
-
-        use crate::state::app_state::AppState;
-
-        let state = expect_context::<AppState>();
-        let db = state.db();
-
-        let mut conditions = Condition::all();
-        conditions = conditions.add(blog::Column::CategoryId.eq(category_id));
-
-        let blog_vec = Blog::find()
-            .filter(conditions)
-            .order_by_desc(blog::Column::CreateAt)
-            .all(db)
-            .await?;
-
-        let blog_dtos = blog_vec
-            .into_iter()
-            .map(|blog| {
-                RwSignal::new(BlogRequestDto::new(
-                    Some(blog.id),
-                    blog.blog_title,
-                    blog.introduction,
-                    None,
-                    None,
-                    Some(blog.tags),
-                    blog.cover_image_url,
-                    None,
-                    blog.category_id,
-                    Some(blog.create_at.unwrap_or_default().to_string()),
-                    Some(blog.is_featured.unwrap_or_default()),
-                ))
-            })
-            .collect::<Vec<RwSignal<BlogRequestDto>>>();
-
-        Ok(blog_dtos)
-    }
-
-    #[cfg(not(feature = "ssr"))]
-    unreachable!("load_blogs_by_category should only run on the server");
-}
-
-/**
- * 根据类型ID, 加载博客
- */
-#[server]
 pub async fn load_resblogs_by_category(
     category_id: i32,
-) -> Result<Vec<RwSignal<BlogResponsetDto>>, ServerFnError> {
+) -> Result<Vec<BlogResponsetDto>, ServerFnError> {
     #[cfg(feature = "ssr")]
     {
         use crate::entity::blog;
@@ -202,7 +147,7 @@ pub async fn load_resblogs_by_category(
             .into_iter()
             .map(|blog| {
                 let blog_content = blog.content;
-                RwSignal::new(BlogResponsetDto::new(
+                BlogResponsetDto::new(
                     blog.id,
                     blog.blog_title,
                     blog.introduction,
@@ -215,9 +160,9 @@ pub async fn load_resblogs_by_category(
                         .map(|dt| dt.format("%d %b, %Y").to_string())
                         .unwrap_or_default(),
                     blog.is_featured.unwrap_or_default(),
-                ))
+                )
             })
-            .collect::<Vec<RwSignal<BlogResponsetDto>>>();
+            .collect::<Vec<BlogResponsetDto>>();
 
         Ok(blog_resdtos)
     }
@@ -241,10 +186,12 @@ pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnE
         let state = expect_context::<AppState>();
         let db = state.db();
 
+        tracing::info!("start loading blog, the blog_id = {}", blog_id);
+
         let blog_dto_opt = Blog::find_by_id(blog_id).one(db).await?;
         if let Some(blog_dto) = blog_dto_opt {
             let blog_content = blog_dto.content;
-            return Ok(BlogResponsetDto::new(
+            let blog_response = BlogResponsetDto::new(
                 blog_dto.id,
                 blog_dto.blog_title,
                 blog_dto.introduction,
@@ -258,7 +205,9 @@ pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnE
                     .map(|dt| dt.format("%d %b, %Y").to_string())
                     .unwrap_or_default(),
                 blog_dto.is_featured.unwrap_or(false),
-            ));
+            );
+            tracing::info!("loaded blog response data: {:?}", blog_response);
+            return Ok(blog_response);
         } else {
             return Ok(BlogResponsetDto::default());
         }
