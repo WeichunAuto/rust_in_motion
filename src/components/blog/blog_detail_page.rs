@@ -40,7 +40,9 @@ pub fn BlogDetailPage() -> impl IntoView {
         }
     };
 
-    let blog_resource = Resource::new(
+    // 使用 BlockingResource 阻塞 SSR 流式渲染，确保博客数据在 <head> 发出前已就绪
+    // 这样 OG meta tags 才能出现在初始 HTML 响应中，LinkedIn 等爬虫才能正确抓取
+    let blog_resource = Resource::new_blocking(
         move || blog_id,
         |blog_id| async move { load_blog_by_id(blog_id).await },
     );
@@ -62,15 +64,8 @@ pub fn BlogDetailPage() -> impl IntoView {
                             let mut created_at = blog.get_create_at();
                             // created_at.truncate(11);
 
-                            let page_url = web_sys::window()
-                                .and_then(|w| w.location().href().ok())
-                                .unwrap_or_default();
                             // LinkedIn 分享爬虫需要绝对 URL，将相对路径拼接为完整地址
                             let og_url = format!("{}/blog_details/{}", SITE_URL, blog.get_id());
-
-                            leptos::logging::log!("page_url =  {}", page_url);
-                            leptos::logging::log!("og_url =  {}", og_url);
-
                             let og_image = cover.clone()
                                 .filter(|s| !s.is_empty())
                                 .map(|path| format!("{}{}", SITE_URL, path))
