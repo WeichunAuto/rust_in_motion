@@ -9,6 +9,7 @@ use crate::{
 };
 use urlencoding::encode;
 
+
 // 博客详情页-博客ID参数
 #[derive(Params, PartialEq)]
 struct BlogIdParams {
@@ -25,28 +26,13 @@ pub fn BlogDetailPage() -> impl IntoView {
         .and_then(|p| p.blog_id)
         .unwrap_or_default();
 
-    let linkedin_share_url = move || {
-        // SSR 阶段：不能调用 web_sys
-        #[cfg(target_arch = "wasm32")]
-        {
-            // WASM 阶段：正常获取当前 URL 并编码
-            let page_url = web_sys::window()
-                .and_then(|w| w.location().href().ok())
-                .unwrap_or_default();
-            format!(
-                "https://www.linkedin.com/sharing/share-offsite/?url={}",
-                &encode(&page_url).to_string()
-            )
-        }
-    };
-
     // 使用 BlockingResource 阻塞 SSR 流式渲染，确保博客数据在 <head> 发出前已就绪
     // 这样 OG meta tags 才能出现在初始 HTML 响应中，LinkedIn 等爬虫才能正确抓取
     let blog_resource = Resource::new_blocking(
         move || blog_id,
         |blog_id| async move { load_blog_by_id(blog_id).await },
     );
-
+    
     view! {
         <div class="w-full">
             <Suspense fallback=move || view! {
@@ -64,8 +50,14 @@ pub fn BlogDetailPage() -> impl IntoView {
                             let mut created_at = blog.get_create_at();
                             // created_at.truncate(11);
 
-                            // LinkedIn 分享爬虫需要绝对 URL，将相对路径拼接为完整地址
+                            // 用 SITE_URL + blog_id 静态拼接页面绝对 URL
                             let og_url = format!("{}/blog_details/{}", SITE_URL, blog.get_id());
+                            // LinkedIn 分享按钮 href：直接用已知 URL 结构构造，无需 web_sys
+                            // 避免 #[cfg(wasm32)] 导致 SSR/WASM 返回类型不一致引起的水合失败
+                            let linkedin_share_url = format!(
+                                "https://www.linkedin.com/sharing/share-offsite/?url={}",
+                                encode(&og_url)
+                            );
                             let og_image = cover.clone()
                                 .filter(|s| !s.is_empty())
                                 .map(|path| format!("{}{}", SITE_URL, path))
@@ -113,7 +105,7 @@ pub fn BlogDetailPage() -> impl IntoView {
                                         <div class="flex flex-row gap-3 justify-end items-center">
                                             <div>
                                                 <a
-                                                    href=move || linkedin_share_url()
+                                                    href={linkedin_share_url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
