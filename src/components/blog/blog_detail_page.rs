@@ -18,12 +18,16 @@ struct BlogIdParams {
 #[component]
 pub fn BlogDetailPage() -> impl IntoView {
     let params = use_params::<BlogIdParams>();
-    let blog_id = params
-        .read_untracked()
-        .as_ref()
-        .ok()
-        .and_then(|p| p.blog_id)
-        .unwrap_or_default();
+    // let blog_id = params
+    //     .read_untracked()
+    //     .as_ref()
+    //     .ok()
+    //     .and_then(|p| p.blog_id)
+    //     .unwrap_or_default();
+
+    let blog_id = Memo::new(move |_| {
+        params.read().as_ref().ok().and_then(|p| p.blog_id).unwrap_or_default()                                                                                                                                         
+    });  
 
     let linkedin_share_url = move || {
         // SSR 阶段：不能调用 web_sys
@@ -43,8 +47,8 @@ pub fn BlogDetailPage() -> impl IntoView {
     // 使用 BlockingResource 阻塞 SSR 流式渲染，确保博客数据在 <head> 发出前已就绪
     // 这样 OG meta tags 才能出现在初始 HTML 响应中，LinkedIn 等爬虫才能正确抓取
     let blog_resource = Resource::new_blocking(
-        move || blog_id,
-        |blog_id| async move { load_blog_by_id(blog_id).await },
+        move || blog_id.get(),
+        |id| async move { load_blog_by_id(id).await },
     );
 
     view! {
