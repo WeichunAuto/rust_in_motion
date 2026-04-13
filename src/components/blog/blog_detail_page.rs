@@ -1,8 +1,10 @@
 use leptos::prelude::*;
+use leptos_meta::{Meta, Title};
 use leptos_router::{hooks::use_params, params::Params};
 
 use crate::{
     components::icons::icons::LinkedIcon,
+    constant::SITE_URL,
     server_fn::{blog::load_blog_by_id, common::render_markdown},
 };
 use urlencoding::encode;
@@ -59,7 +61,35 @@ pub fn BlogDetailPage() -> impl IntoView {
                             let cover = blog.get_cover_image_url();
                             let mut created_at = blog.get_create_at();
                             // created_at.truncate(11);
+
+                            let page_url = web_sys::window()
+                                .and_then(|w| w.location().href().ok())
+                                .unwrap_or_default();
+                            // LinkedIn 分享爬虫需要绝对 URL，将相对路径拼接为完整地址
+                            let og_url = format!("{}/blog_details/{}", SITE_URL, blog.get_id());
+
+                            leptos::logging::log!("page_url =  {}", page_url);
+                            leptos::logging::log!("og_url =  {}", og_url);
+
+                            let og_image = cover.clone()
+                                .filter(|s| !s.is_empty())
+                                .map(|path| format!("{}{}", SITE_URL, path))
+                                .unwrap_or_default();
+
                             view! {
+                                // 动态设置浏览器 Tab 标题为当前文章标题
+                                <Title text=blog.get_blog_title() />
+                                // Open Graph 标签：供 LinkedIn 等社交平台分享时抓取预览信息
+                                // SSR 渲染时这些标签会直接注入 <head>，爬虫无需执行 JS 即可读取
+                                <Meta property="og:type" content="article" />
+                                <Meta property="og:title" content=blog.get_blog_title() />
+                                <Meta property="og:description" content=blog.get_introduction() />
+                                <Meta property="og:url" content=og_url />
+                                // 封面图为空时不渲染该标签，避免 og:image 指向无效地址
+                                {(!og_image.is_empty()).then(|| view! {
+                                    <Meta property="og:image" content=og_image />
+                                })}
+
                                 <article class="w-10/12 md:w-8/12 lg:w-7/12 mx-auto py-10">
                                     <h1 class="text-3xl md:text-4xl font-bold mb-6">
                                         {blog.get_blog_title()}

@@ -12,3 +12,6 @@ pub const BLOG_COVER_DIR: &str = "/uploads/blog/covers/";
 
 // 博客内容的上传目录
 pub const BLOG_CONTENT_DIR: &str = "/uploads/blog/contents/";
+
+// 生产环境域名，用于拼接 Open Graph 标签中的绝对 URL
+pub const SITE_URL: &str = "https://www.rustinmotion.dev";
