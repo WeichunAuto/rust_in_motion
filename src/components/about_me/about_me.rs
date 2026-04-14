@@ -144,13 +144,13 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
 
             // 右侧：icon（移动端居中，PC 靠右）
             <div class="flex flex-row gap-4 justify-center sm:justify-end items-center">
-                <a href="#" class="p-2 rounded-md hover:bg-gray-100 transition">
+                <a href="mailto:bobby.wangwc@outlook.com" target="_blank" class="p-2 rounded-md hover:bg-gray-100 transition">
                     <img src="images/email_icon.png" class="size-5"/>
                 </a>
-                <a href="#" class="p-2 rounded-md hover:bg-gray-100 transition">
+                <a href="https://www.linkedin.com/in/weichun-wang" target="_blank" class="p-2 rounded-md hover:bg-gray-100 transition">
                     <img src="images/linkedin_icon.png" class="size-5"/>
                 </a>
-                <a href="#" class="p-2 rounded-md hover:bg-gray-100 transition">
+                <a href="https://github.com/WeichunAuto" target="_blank" class="p-2 rounded-md hover:bg-gray-100 transition">
                     <img src="images/github_icon.png" class="size-5"/>
                 </a>
             </div>
