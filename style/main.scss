@@ -103,12 +103,12 @@ body {
 }
 
 .markdown-body pre {
-    background-color: #f6f8fa;
-    border-radius: 3px;
-    padding: 16px;
+    /* background-color 和 padding 由 syntect inline style 控制，此处不覆盖 */
+    border-radius: 6px;
     overflow: auto;
     font-size: 85%;
     line-height: 1.45;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
 }
 
 .markdown-body pre code {

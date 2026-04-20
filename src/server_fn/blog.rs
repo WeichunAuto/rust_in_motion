@@ -186,17 +186,18 @@ pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnE
         let state = expect_context::<AppState>();
         let db = state.db();
 
-        tracing::info!("start loading blog, the blog_id = {}", blog_id);
+        // tracing::info!("start loading blog, the blog_id = {}", blog_id);
 
         let blog_dto_opt = Blog::find_by_id(blog_id).one(db).await?;
         if let Some(blog_dto) = blog_dto_opt {
             let blog_content = blog_dto.content;
+            let html_content = crate::server_fn::common::render_markdown(&blog_content);
             let blog_response = BlogResponsetDto::new(
                 blog_dto.id,
                 blog_dto.blog_title,
                 blog_dto.introduction,
                 calculate_reading_time(&blog_content),
-                blog_content,
+                html_content,
                 blog_dto.tags,
                 blog_dto.cover_image_url,
                 blog_dto.category_id,

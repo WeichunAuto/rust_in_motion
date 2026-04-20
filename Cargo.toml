@@ -35,6 +35,12 @@ sea-orm = { version = "1.1.17", features = [
 web-sys = { version = "0.3", features = ["Storage", "Window", "Location", "MediaQueryList", "MediaQueryListEvent", "Navigator", "Clipboard", "File", "HtmlInputElement", "FileReader", "Event", "FileList"] }
 # 用于把 markdown 转 html
 pulldown-cmark = "0.13.0"
+# 用于服务端代码语法高亮（SQL/Java/Rust）
+syntect = { version = "5", default-features = false, features = [
+    "default-fancy",
+    "default-themes",
+    "html",
+], optional = true }
 # 用于把图片转成 base64 编码
 base64 = "0.22"
 tower-http = { version = "0.6.8", features = ["fs"], optional = true}
@@ -58,7 +64,8 @@ ssr = [
 
     "num_cpus",
     "sea-orm",
-    "tower-http", 
+    "tower-http",
+    "dep:syntect",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode

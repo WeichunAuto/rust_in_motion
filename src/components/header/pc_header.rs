@@ -1,5 +1,5 @@
 use leptos::{either::Either, prelude::*};
-use leptos_router::components::{Outlet, A};
+use leptos_router::components::A;
 
 use crate::{components::icons::icons::SearchIcon, dto::menu_dto::MenuDto};
 

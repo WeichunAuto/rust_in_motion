@@ -5,7 +5,7 @@ use leptos_router::{hooks::use_params, params::Params};
 use crate::{
     components::icons::icons::LinkedIcon,
     constant::SITE_URL,
-    server_fn::{blog::load_blog_by_id, common::render_markdown},
+    server_fn::blog::load_blog_by_id,
 };
 use urlencoding::encode;
 
@@ -45,7 +45,7 @@ pub fn BlogDetailPage() -> impl IntoView {
                     blog_resource.get().map(|result| match result {
                         Ok(blog) => {
 
-                            let html_content = render_markdown(&blog.get_content());
+                            let html_content = blog.get_content();
                             let cover = blog.get_cover_image_url();
                             let mut created_at = blog.get_create_at();
                             // created_at.truncate(11);
