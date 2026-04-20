@@ -181,6 +181,7 @@ pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnE
         use crate::entity::prelude::Blog;
         use sea_orm::EntityTrait;
 
+        use crate::server_fn::common::render_markdown;
         use crate::state::app_state::AppState;
 
         let state = expect_context::<AppState>();
@@ -191,7 +192,7 @@ pub async fn load_blog_by_id(blog_id: i32) -> Result<BlogResponsetDto, ServerFnE
         let blog_dto_opt = Blog::find_by_id(blog_id).one(db).await?;
         if let Some(blog_dto) = blog_dto_opt {
             let blog_content = blog_dto.content;
-            let html_content = crate::server_fn::common::render_markdown(&blog_content);
+            let html_content = render_markdown(&blog_content);
             let blog_response = BlogResponsetDto::new(
                 blog_dto.id,
                 blog_dto.blog_title,

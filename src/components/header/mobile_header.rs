@@ -3,7 +3,7 @@ use crate::{
     dto::menu_dto::MenuDto,
 };
 use leptos::{either::Either, prelude::*};
-use leptos_router::components::{Outlet, A};
+use leptos_router::components::A;
 
 #[component]
 pub fn MobileHeader(
