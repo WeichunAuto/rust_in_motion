@@ -130,7 +130,7 @@ fn SummaryAndQuezView(name: String, quez_ids: Vec<i32>, summary: String) -> impl
             // 左侧：头像 + 名字（移动端居中，PC 靠左）
             <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4
                         text-center sm:text-left">
-                <div class="size-24 sm:size-20 overflow-hidden rounded-full bg-green-200 shrink-0">
+                <div class="size-24 sm:size-20 overflow-hidden rounded-full shrink-0">
                     <img src="images/profile.svg" class="w-full h-full object-cover"/>
                 </div>
 
