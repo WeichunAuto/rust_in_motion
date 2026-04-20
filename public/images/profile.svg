@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+
+  <!-- 背景：中等深色，圆形裁切 -->
+  <defs>
+    <clipPath id="circle-clip">
+      <circle cx="100" cy="100" r="100"/>
+    </clipPath>
+  </defs>
+  <circle cx="100" cy="100" r="100" fill="#0A1628"/>
+
+  <!-- 身体/肩膀 -->
+  <rect x="30" y="148" width="140" height="60" rx="20" fill="#0D2137" stroke="#00C8FF" stroke-width="2"/>
+  <!-- 胸口齿轮装饰 -->
+  <circle cx="100" cy="163" r="10" fill="#00C8FF"/>
+  <circle cx="100" cy="163" r="5.5" fill="#0A1628"/>
+  <circle cx="100" cy="163" r="2.5" fill="#00C8FF"/>
+  <!-- 齿轮凸起（8个方向） -->
+  <rect x="98" y="150" width="4" height="5" rx="1" fill="#00C8FF"/>
+  <rect x="98" y="171" width="4" height="5" rx="1" fill="#00C8FF"/>
+  <rect x="87"  y="161" width="5" height="4" rx="1" fill="#00C8FF"/>
+  <rect x="108" y="161" width="5" height="4" rx="1" fill="#00C8FF"/>
+  <rect x="89.5" y="153" width="4" height="4" rx="1" fill="#00C8FF" transform="rotate(45 91.5 155)"/>
+  <rect x="107"  y="153" width="4" height="4" rx="1" fill="#00C8FF" transform="rotate(45 109 155)"/>
+  <rect x="89.5" y="168" width="4" height="4" rx="1" fill="#00C8FF" transform="rotate(45 91.5 170)"/>
+  <rect x="107"  y="168" width="4" height="4" rx="1" fill="#00C8FF" transform="rotate(45 109 170)"/>
+
+  <!-- 颈部 -->
+  <rect x="82" y="130" width="36" height="22" rx="6" fill="#0D2137" stroke="#00C8FF" stroke-width="1.5"/>
+  <!-- 颈部线条装饰 -->
+  <line x1="82" y1="139" x2="118" y2="139" stroke="#00C8FF" stroke-width="1" opacity="0.5"/>
+  <line x1="82" y1="145" x2="118" y2="145" stroke="#00C8FF" stroke-width="1" opacity="0.5"/>
+
+  <!-- 机器人头部 -->
+  <rect x="28" y="52" width="144" height="84" rx="18" fill="#0D2137" stroke="#00C8FF" stroke-width="2.5"/>
+
+  <!-- 天线杆 -->
+  <rect x="96" y="30" width="8" height="26" rx="4" fill="#00C8FF"/>
+  <!-- 天线顶端 -->
+  <circle cx="100" cy="28" r="10" fill="#00C8FF"/>
+  <circle cx="100" cy="28" r="5" fill="#0A1628"/>
+  <circle cx="100" cy="28" r="2.5" fill="#00C8FF"/>
+
+  <!-- 左耳螺丝 -->
+  <rect x="14" y="80" width="16" height="26" rx="8" fill="#0D2137" stroke="#00C8FF" stroke-width="2"/>
+  <circle cx="22" cy="93" r="4" fill="#00C8FF"/>
+  <circle cx="22" cy="93" r="2" fill="#0A1628"/>
+  <!-- 右耳螺丝 -->
+  <rect x="170" y="80" width="16" height="26" rx="8" fill="#0D2137" stroke="#00C8FF" stroke-width="2"/>
+  <circle cx="178" cy="93" r="4" fill="#00C8FF"/>
+  <circle cx="178" cy="93" r="2" fill="#0A1628"/>
+
+  <!-- 左眼（齿轮风格） -->
+  <circle cx="72" cy="94" r="20" fill="#00C8FF"/>
+  <circle cx="72" cy="94" r="13" fill="#0A1628"/>
+  <circle cx="72" cy="94" r="7" fill="#00C8FF"/>
+  <circle cx="72" cy="94" r="3.5" fill="#0A1628"/>
+  <!-- 左眼齿轮凸起 -->
+  <rect x="70" y="71" width="4" height="7" rx="2" fill="#00C8FF"/>
+  <rect x="70" y="110" width="4" height="7" rx="2" fill="#00C8FF"/>
+  <rect x="49"  y="92" width="7" height="4" rx="2" fill="#00C8FF"/>
+  <rect x="88"  y="92" width="7" height="4" rx="2" fill="#00C8FF"/>
+
+  <!-- 右眼（齿轮风格） -->
+  <circle cx="128" cy="94" r="20" fill="#00C8FF"/>
+  <circle cx="128" cy="94" r="13" fill="#0A1628"/>
+  <circle cx="128" cy="94" r="7" fill="#00C8FF"/>
+  <circle cx="128" cy="94" r="3.5" fill="#0A1628"/>
+  <!-- 右眼齿轮凸起 -->
+  <rect x="126" y="71" width="4" height="7" rx="2" fill="#00C8FF"/>
+  <rect x="126" y="110" width="4" height="7" rx="2" fill="#00C8FF"/>
+  <rect x="105"  y="92" width="7" height="4" rx="2" fill="#00C8FF"/>
+  <rect x="144"  y="92" width="7" height="4" rx="2" fill="#00C8FF"/>
+
+  <!-- 嘴巴（像素格子风） -->
+  <rect x="62"  y="120" width="8" height="6" rx="2" fill="#00C8FF"/>
+  <rect x="74"  y="122" width="8" height="5" rx="2" fill="#00C8FF" opacity="0.7"/>
+  <rect x="86"  y="123" width="8" height="4" rx="2" fill="#00C8FF" opacity="0.5"/>
+  <rect x="98"  y="123" width="8" height="4" rx="2" fill="#00C8FF" opacity="0.5"/>
+  <rect x="110" y="122" width="8" height="5" rx="2" fill="#00C8FF" opacity="0.7"/>
+  <rect x="122" y="120" width="8" height="6" rx="2" fill="#00C8FF"/>
+
+</svg>

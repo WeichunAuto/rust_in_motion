@@ -31,8 +31,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <HydrationScripts options/>
                 <MetaTags/>
 
-                // <link rel="icon" type="image/png" href="/favicon.png" />
-                <link rel="Bobby Blog" href="/images/favicon.png" />
+                <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
             </head>
             <body>
                 <App/>
